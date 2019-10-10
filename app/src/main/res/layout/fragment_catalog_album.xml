@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.CatalogAlbumFragment">
+
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/fragment_catalog_album_tb_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:navigationIcon="?attr/homeAsUpIndicator" />
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/fragment_catalog_album_tb_title"
+            android:scrollbars="none">
+
+        <LinearLayout
+                android:id="@+id/fragment_catalog_album_ll_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="20dp"
+                android:scrollbarAlwaysDrawVerticalTrack="false">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/fragment_catalog_album_cl_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="80dp"
+                    android:paddingBottom="50dp">
+
+                <ImageView
+                        android:id="@+id/fragment_catalog_album_iv_coverart"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                        android:id="@+id/fragment_catalog_album_tv_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginRight="20dp"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/contentColorPrimary"
+                        android:textSize="@dimen/content_large_text_size"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/fragment_catalog_album_iv_coverart" />
+
+                <TextView
+                        android:id="@+id/fragment_catalog_album_tv_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginRight="20dp"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/contentColorSecondary"
+                        android:textSize="@dimen/content_small_text_size"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/fragment_catalog_album_tv_title" />
+
+                <com.freemusic.musicbox.ui.widget.RoundedTouchFadeTextView
+                        android:id="@+id/fragment_catalog_album_tv_play"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:paddingStart="35dp"
+                        android:paddingLeft="35dp"
+                        android:paddingEnd="35dp"
+                        android:paddingRight="35dp"
+                        android:text="@string/label_music_play"
+                        android:textColor="@color/contentColorPrimary"
+                        android:textSize="@dimen/content_small_text_size"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/fragment_catalog_album_tv_label"
+                        custom:fade_duration="50"
+                        custom:fade_size_factor="0.95"
+                        custom:rounded_background_color="@color/contentBgColorLight"
+                        custom:rounded_radius="24dp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+    <TextView
+            android:id="@+id/fragment_catalog_album_tv_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:textSize="@dimen/content_small_text_size"
+            android:textColor="@color/contentColorPrimary"
+            android:text="@string/msg_load_error_press_retry" />
+
+    <ProgressBar
+            android:id="@+id/fragment_catalog_album_pb_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            style="?android:attr/progressBarStyle" />
+
+</RelativeLayout>

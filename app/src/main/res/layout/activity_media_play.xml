@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.MediaPlayActivity">
+
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/activity_play_tb_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="?attr/homeAsUpIndicator" />
+
+    <ImageView
+            android:id="@+id/activity_play_iv_coverart"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="18dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            app:layout_constraintBottom_toTopOf="@+id/activity_play_tv_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_play_tb_header" />
+
+    <TextView
+            android:id="@+id/activity_play_tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:textColor="@color/contentColorPrimary"
+            android:textSize="@dimen/content_large_text_size"
+            app:layout_constraintBottom_toTopOf="@+id/activity_play_tv_subtitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+            android:id="@+id/activity_play_tv_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginBottom="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:textColor="@color/contentColorSecondary"
+            android:textSize="@dimen/content_medium_text_size"
+            app:layout_constraintBottom_toTopOf="@+id/activity_play_sb_timeline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    <SeekBar
+            android:id="@+id/activity_play_sb_timeline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/activity_play_iv_play"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+            android:id="@+id/activity_play_tv_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="24dp"
+            android:text="00:00"
+            android:textColor="@color/contentColorPrimary"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/activity_play_sb_timeline" />
+
+    <TextView
+            android:id="@+id/activity_play_tv_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:text="59:59"
+            android:textColor="@color/contentColorPrimary"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/activity_play_sb_timeline" />
+
+    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+            android:id="@+id/activity_play_iv_favorite"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginBottom="47dp"
+            android:tint="@color/contentColorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintRight_toLeftOf="@id/activity_play_iv_prev"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_favorite_outlined"
+            custom:fade_alpha_factor="0.6"
+            custom:fade_duration="50"
+            custom:fade_size_factor="0.95" />
+
+    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+            android:id="@+id/activity_play_iv_prev"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="42dp"
+            android:tint="@color/contentColorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/activity_play_iv_favorite"
+            app:layout_constraintRight_toLeftOf="@id/activity_play_iv_play"
+            app:srcCompat="@drawable/ic_media_prev"
+            custom:fade_alpha_factor="0.6"
+            custom:fade_duration="50"
+            custom:fade_size_factor="0.95" />
+
+    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+            android:id="@+id/activity_play_iv_play"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginBottom="30dp"
+            android:tint="@color/contentColorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/activity_play_iv_prev"
+            app:layout_constraintRight_toLeftOf="@id/activity_play_iv_next"
+            app:srcCompat="@drawable/ic_media_circle_play"
+            custom:fade_alpha_factor="0.6"
+            custom:fade_duration="50"
+            custom:fade_size_factor="0.95" />
+
+    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+            android:id="@+id/activity_play_iv_next"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="42dp"
+            android:tint="@color/contentColorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/activity_play_iv_play"
+            app:layout_constraintRight_toLeftOf="@id/activity_play_iv_mode"
+            app:srcCompat="@drawable/ic_media_next"
+            custom:fade_alpha_factor="0.6"
+            custom:fade_duration="50"
+            custom:fade_size_factor="0.95" />
+
+    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+            android:id="@+id/activity_play_iv_mode"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginBottom="47dp"
+            android:tint="@color/contentColorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/activity_play_iv_next"
+            app:srcCompat="@drawable/ic_media_no_shuffle"
+            custom:fade_alpha_factor="0.6"
+            custom:fade_duration="50"
+            custom:fade_size_factor="0.95" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

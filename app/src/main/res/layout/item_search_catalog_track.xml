@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.freemusic.musicbox.ui.widget.TouchFadeFrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        custom:fade_size_factor="0.95"
+        custom:fade_alpha_factor="0.6"
+        custom:fade_duration="50"
+        custom:fade_delay="75">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <ImageView
+                android:id="@+id/item_search_catalog_track_iv_coverart"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginLeft="15dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="H,1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+                android:id="@+id/item_search_catalog_track_tv_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:scrollHorizontally="true"
+                android:textColor="@color/contentColorPrimary"
+                android:textSize="@dimen/content_medium_text_size"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toTopOf="@id/item_search_catalog_track_tv_label"
+                app:layout_constraintLeft_toRightOf="@id/item_search_catalog_track_iv_coverart"
+                app:layout_constraintRight_toLeftOf="@id/item_search_catalog_track_iv_go"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+                android:id="@+id/item_search_catalog_track_tv_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:scrollHorizontally="true"
+                android:text="@string/label_music_track"
+                android:textColor="@color/contentColorSecondary"
+                android:textSize="@dimen/content_small_text_size"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/item_search_catalog_track_iv_coverart"
+                app:layout_constraintRight_toLeftOf="@id/item_search_catalog_track_iv_go"
+                app:layout_constraintTop_toBottomOf="@id/item_search_catalog_track_tv_title" />
+
+        <ImageView
+                android:id="@+id/item_search_catalog_track_iv_go"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:tint="@color/contentColorSecondary"
+                app:srcCompat="@drawable/ic_arrow_right"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.freemusic.musicbox.ui.widget.TouchFadeFrameLayout>

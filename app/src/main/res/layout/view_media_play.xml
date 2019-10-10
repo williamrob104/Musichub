@@ -1,0 +1,52 @@
+<merge
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <ImageView
+            android:id="@+id/view_media_play_iv_coverart"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintDimensionRatio="H,1:1" />
+
+    <TextView
+            android:id="@+id/view_media_play_tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp"
+            android:textSize="@dimen/content_medium_text_size"
+            android:textColor="@color/contentColorPrimary"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/view_media_play_iv_play"
+            app:layout_constraintStart_toEndOf="@+id/view_media_play_iv_coverart"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+            android:id="@+id/view_media_play_iv_play"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:tint="@color/contentColorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_media_play"
+            custom:fade_alpha_factor="0.6"
+            custom:fade_duration="50"
+            custom:fade_size_factor="0.95" />
+
+</merge>

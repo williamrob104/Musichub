@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.freemusic.musicbox.ui.widget.TouchFadeFrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        custom:fade_size_factor="0.95"
+        custom:fade_alpha_factor="0.6"
+        custom:fade_duration="50"
+        custom:fade_delay="75">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:id="@+id/item_search_catalog_viewall_tv_title"
+                android:textColor="@color/contentColorPrimary"
+                android:textSize="@dimen/content_medium_text_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp" />
+
+    </RelativeLayout>
+
+</com.freemusic.musicbox.ui.widget.TouchFadeFrameLayout>

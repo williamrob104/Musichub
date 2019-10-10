@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:id="@+id/activity_main_bnv_navigate_home"
+            android:icon="@drawable/ic_home_checkable"
+            android:title="@string/label_home"/>
+
+    <item
+            android:id="@+id/activity_main_bnv_navigate_search"
+            android:icon="@drawable/ic_search"
+            android:title="@string/label_search"/>
+
+    <item
+            android:id="@+id/activity_main_bnv_navigate_library"
+            android:icon="@drawable/ic_library_checkable"
+            android:title="@string/label_library"/>
+
+</menu>

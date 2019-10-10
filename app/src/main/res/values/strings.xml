@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name" translatable="false">MusicBox</string>
+    <string name="label_home">Home</string>
+    <string name="label_library">Your Music Library</string>
+    <string name="label_search">Search</string>
+    <string name="label_search_catalog">Catalog</string>
+    <string name="label_search_youtube">YouTube</string>
+    <string name="label_music_artist">Artist</string>
+    <string name="label_music_album">Album</string>
+    <string name="label_music_track">Track</string>
+    <string name="label_music_artists">Artists</string>
+    <string name="label_music_albums">Albums</string>
+    <string name="label_music_tracks">Tracks</string>
+    <string name="label_term_viewall">View All {0}</string>
+    <string name="label_term_containing">\"{1}\" in {0}</string>
+    <string name="label_media_mode_linear">Linear</string>
+    <string name="label_media_mode_shuffle">Shuffle</string>
+    <string name="label_media_mode_repeat_one">Repeat One</string>
+    <string name="label_term_andmore">And More</string>
+    <string name="label_music_album_single">Single &amp; EP</string>
+    <string name="label_music_album_live">Live Album</string>
+    <string name="label_music_album_compilation">Compilation</string>
+    <string name="label_music_latest_release">Latest Release</string>
+    <string name="label_music_play">Shuffle Play</string>
+    <string name="label_term_belongs">{0}\'s {1}</string>
+
+    <string name="label_media_loading">Loading</string>
+    <string name="label_date_1">{0}</string>
+    <string name="label_date_2">{1}, {0}</string>
+    <string name="label_date_3">{1} {2}, {0}</string>
+    <string name="label_date_jan">Jan</string>
+    <string name="label_date_feb">Feb</string>
+    <string name="label_date_mar">Mar</string>
+    <string name="label_date_apr">Apr</string>
+    <string name="label_date_may">May</string>
+    <string name="label_date_jun">Jun</string>
+    <string name="label_date_jul">Jul</string>
+    <string name="label_date_aug">Aug</string>
+    <string name="label_date_sep">Sep</string>
+    <string name="label_date_oct">Oct</string>
+    <string name="label_date_nov">Nov</string>
+    <string name="label_date_dec">Dec</string>
+    <string name="msg_load_error_press_retry">Load error, press to retry</string>
+    <string name="msg_unsupported_intent">Unsupported format</string>
+    <string name="msg_no_matching_result">No matching rersult</string>
+</resources>

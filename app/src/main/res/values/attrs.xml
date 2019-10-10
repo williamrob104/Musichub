@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="TouchFadeView">
+        <attr name="fade_size_factor" format="float" />
+        <attr name="fade_alpha_factor" format="float" />
+        <attr name="fade_duration" format="integer"/>
+        <attr name="fade_delay" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="RoundedView">
+        <attr name="rounded_radius" format="dimension"/>
+        <attr name="rounded_background_color" format="color"/>
+        <attr name="rounded_stroke_color" format="color"/>
+        <attr name="rounded_stroke_width" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="FadingImageView">
+        <attr name="fadingSides" format="flags">
+            <flag name="left" value="1"/>
+            <flag name="right" value="2"/>
+            <flag name="top" value="4"/>
+            <flag name="bottom" value="8"/>
+        </attr>
+        <attr name="fadingEdgeWidth" format="dimension"/>
+    </declare-styleable>
+
+</resources>
