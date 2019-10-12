@@ -49,16 +49,16 @@ class SearchFragment : Fragment(), FragmentActions {
         }
     }
 
-    inner class ViewPagerAdapter(fm: FragmentManager): FragmentPagerAdapter(fm) {
+    inner class ViewPagerAdapter(fm: FragmentManager): FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getCount(): Int {
             return 2
         }
 
-        override fun getItem(position: Int): Fragment? {
+        override fun getItem(position: Int): Fragment {
             return when(position) {
                 0 -> SearchCatalogFragment()
                 1 -> SearchYoutubeFragment()
-                else -> null
+                else -> throw RuntimeException()
             }
         }
 

@@ -11,10 +11,7 @@ fun YoutubeScraper.matchingVideoStreams(track: Track, listener: ResponseListener
         var cancellable1: Cancellable? = null
         var cancellable2: Cancellable? = null
 
-        val trackTitle = "${track.title}"
-        val artistName = "${track.artistName}"
-        val albumTitle = track.albumTitle?.let { "${it.removePostDash()}" }
-        val query = "$artistName $trackTitle"
+        val query = "${track.title} ${track.artistName}"
         try {
             val searchFuture = RequestFuture<YoutubeSearch<YoutubeVideo>>()
             cancellable1 = this.searchVideos(query, listener=searchFuture)

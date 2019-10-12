@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +16,7 @@ import com.freemusic.musicbox.concurrent.ResponseListener
 import com.freemusic.musicbox.resource.AppleMusicEntity
 import com.freemusic.musicbox.resource.AppleMusicSearch
 import com.freemusic.musicbox.singleton.Singleton
-import java.text.MessageFormat
+import com.freemusic.musicbox.util.messageFormat
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -79,14 +78,15 @@ class SearchCatalogViewallFragment: Fragment() {
 
 
         toolbar = view.findViewById(R.id.fragment_search_catalog_viewall_tb_title)
-        val labelContains = context!!.resources.getString(R.string.label_term_containing)
         val entityTypeString = context!!.resources.getString(when(entityType) {
             0 -> R.string.label_music_artist
             1 -> R.string.label_music_album
             2 -> R.string.label_music_track
             else -> throw IllegalArgumentException()
         })
-        toolbar.title = MessageFormat.format(labelContains, entityTypeString, query)
+        toolbar.title = context!!.resources.getString(R.string.label_term_containing).messageFormat(
+            entityTypeString, query
+        )
         toolbar.setNavigationOnClickListener {
             activity?.onBackPressed()
         }

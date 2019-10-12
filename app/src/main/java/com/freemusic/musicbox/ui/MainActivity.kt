@@ -6,9 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -136,9 +134,9 @@ class MainActivity: AppCompatActivity(), MainActivityAction {
         handelIntent(intent)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putIntegerArrayList(ARG_NAV_STACK, navStack)
+        outState.putIntegerArrayList(ARG_NAV_STACK, navStack)
     }
 
     override fun onDestroy() {

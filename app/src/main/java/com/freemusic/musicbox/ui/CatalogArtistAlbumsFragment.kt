@@ -22,7 +22,7 @@ import com.freemusic.musicbox.concurrent.ResponseListener
 import com.freemusic.musicbox.resource.AppleMusicAlbum3
 import com.freemusic.musicbox.resource.AppleMusicSection
 import com.freemusic.musicbox.singleton.Singleton
-import java.text.MessageFormat
+import com.freemusic.musicbox.util.messageFormat
 import java.util.concurrent.ConcurrentLinkedQueue
 
 
@@ -91,11 +91,6 @@ class CatalogArtistAlbumsFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             activity?.onBackPressed()
         }
-        if (!artistName.isNullOrBlank()) {
-            val template = resources.getString(R.string.label_term_belongs)
-            val albumsStr = resources.getString(R.string.label_music_albums)
-            toolbar.title = MessageFormat.format(template, artistName, albumsStr)
-        }
 
         recyclerView = view.findViewById(R.id.fragment_catalog_artist_albums_rv_items)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -111,6 +106,13 @@ class CatalogArtistAlbumsFragment : Fragment() {
     }
 
     private fun loadContent() {
+        val artistName = this.artistName
+        if (!artistName.isNullOrBlank()) {
+            val template = resources.getString(R.string.label_term_belongs)
+            val albumsStr = resources.getString(R.string.label_music_albums)
+            toolbar.title = template.messageFormat(artistName, albumsStr)
+        }
+
         if (sectionsUrls.isEmpty())
             return
 
@@ -220,16 +222,15 @@ private class CatalogArtistAlbumsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        if (viewType == 0) {
-            return TextViewHolder(TextView(context).apply {
+        return if (viewType == 0) {
+            TextViewHolder(TextView(context).apply {
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.content_medium_text_size))
                 setTextColor(ContextCompat.getColor(context, R.color.contentColorPrimary))
                 setPadding(padding, padding, 0, 0)
             })
-        }
-        else {
+        } else {
             val v = LayoutInflater.from(context).inflate(R.layout.item_catalog_album, parent, false)
-            return CatalogAlbum(v)
+            CatalogAlbum(v)
         }
     }
 

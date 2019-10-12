@@ -6,7 +6,6 @@ import com.freemusic.musicbox.concurrent.Cancellable
 import com.freemusic.musicbox.concurrent.RequestFuture
 import com.freemusic.musicbox.concurrent.ResponseListener
 import com.freemusic.musicbox.networking.BasicHttpRequests
-import com.freemusic.musicbox.networking.UrlParse
 import com.freemusic.musicbox.networking.UrlParse.decodeParams
 import com.freemusic.musicbox.networking.UrlParse.encodeParams
 import com.freemusic.musicbox.networking.UrlParse.joinUrl
@@ -17,7 +16,6 @@ import com.freemusic.musicbox.resource.VideoCodec.*
 import com.freemusic.musicbox.util.*
 import org.json.JSONObject
 import org.jsoup.nodes.Element
-import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
 import java.util.*

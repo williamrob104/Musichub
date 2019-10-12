@@ -6,18 +6,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
-import com.freemusic.musicbox.concurrent.Cancellable
 import com.freemusic.musicbox.concurrent.ResponseListener
 import com.freemusic.musicbox.resource.AppleMusicTrack
 import com.freemusic.musicbox.resource.Image
-import com.freemusic.musicbox.resource.YoutubeVideoStreams
 import com.freemusic.musicbox.resource.matchingVideoStreams
 import com.freemusic.musicbox.singleton.Singleton
 import com.freemusic.musicbox.util.pipeResponse
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import kotlin.random.Random
 
 
 sealed class MediaHolder {

@@ -1,28 +1,16 @@
 package com.freemusic.musicbox.ui
 
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.freemusic.musicbox.R
-import com.freemusic.musicbox.concurrent.ResponseListener
 import com.freemusic.musicbox.networking.UrlParse
 import com.freemusic.musicbox.playback.YoutubeVideoMediaHolder
 import com.freemusic.musicbox.resource.YoutubeScraper
-import com.freemusic.musicbox.singleton.Singleton
 
 
 class SearchYoutubeFragment : SearchTargetFragment(), FragmentActions {

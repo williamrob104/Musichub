@@ -1,14 +1,11 @@
 package com.freemusic.musicbox.ui
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.Point
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,22 +16,18 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.palette.graphics.Palette
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-
 import com.freemusic.musicbox.R
 import com.freemusic.musicbox.concurrent.Cancellable
 import com.freemusic.musicbox.concurrent.ResponseListener
 import com.freemusic.musicbox.playback.AppleMusicTrackMediaHolder
-import com.freemusic.musicbox.playback.MediaHolder
 import com.freemusic.musicbox.resource.AppleMusicAlbumBrowse
 import com.freemusic.musicbox.resource.AppleMusicTrack
 import com.freemusic.musicbox.singleton.Singleton
 import com.freemusic.musicbox.ui.widget.RoundedTouchFadeTextView
 import com.freemusic.musicbox.util.SpecialCharacters
 import com.freemusic.musicbox.util.formatDate
-import com.freemusic.musicbox.util.squareCropTop
 
 
 class CatalogAlbumFragment : Fragment() {

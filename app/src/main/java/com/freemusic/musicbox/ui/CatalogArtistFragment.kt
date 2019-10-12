@@ -28,9 +28,9 @@ import com.freemusic.musicbox.resource.AppleMusicArtistBrowse
 import com.freemusic.musicbox.singleton.Singleton
 import com.freemusic.musicbox.ui.widget.RoundedTouchFadeTextView
 import com.freemusic.musicbox.util.SpecialCharacters
+import com.freemusic.musicbox.util.messageFormat
 import com.freemusic.musicbox.util.setColor
 import com.google.android.material.appbar.CollapsingToolbarLayout
-import java.text.MessageFormat
 
 
 class CatalogArtistFragment : Fragment() {
@@ -225,9 +225,9 @@ class CatalogArtistFragment : Fragment() {
         }
 
         val textViewAllAlbums = RoundedTouchFadeTextView(context!!).apply {
-            text = MessageFormat.format(
-                resources.getString(R.string.label_term_viewall),
-                resources.getString(R.string.label_music_albums))
+            text = resources.getString(R.string.label_term_viewall).messageFormat(
+                resources.getString(R.string.label_music_albums)
+            )
             setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.content_small_text_size))
             setTextColor(ContextCompat.getColor(context, R.color.contentColorPrimary))
             gravity = Gravity.CENTER

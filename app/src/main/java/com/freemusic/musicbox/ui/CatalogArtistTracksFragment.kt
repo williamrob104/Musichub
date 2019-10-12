@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,7 +23,7 @@ import com.freemusic.musicbox.resource.AppleMusicSection
 import com.freemusic.musicbox.resource.AppleMusicSong3
 import com.freemusic.musicbox.resource.AppleMusicTrack
 import com.freemusic.musicbox.singleton.Singleton
-import java.text.MessageFormat
+import com.freemusic.musicbox.util.messageFormat
 
 
 class CatalogArtistTracksFragment : Fragment() {
@@ -78,11 +77,6 @@ class CatalogArtistTracksFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             activity?.onBackPressed()
         }
-        if (!artistName.isNullOrBlank()) {
-            val template = resources.getString(R.string.label_term_belongs)
-            val albumsStr = resources.getString(R.string.label_music_tracks)
-            toolbar.title = MessageFormat.format(template, artistName, albumsStr)
-        }
 
         recyclerView = view.findViewById(R.id.fragment_catalog_artist_tracks_rv_items)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -97,6 +91,13 @@ class CatalogArtistTracksFragment : Fragment() {
     }
 
     private fun loadContent() {
+        val artistName = this.artistName
+        if (!artistName.isNullOrBlank()) {
+            val template = resources.getString(R.string.label_term_belongs)
+            val albumsStr = resources.getString(R.string.label_music_tracks)
+            toolbar.title = template.messageFormat(artistName, albumsStr)
+        }
+
         val sectionTopSongsUrl = this.sectionTopSongsUrl ?: return
 
         progressBar.visibility = View.VISIBLE

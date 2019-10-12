@@ -21,3 +21,10 @@ internal fun String.splitBtIndex(index: Int): Pair<String, String> {
         try { this.substring(0, index) } catch(e: StringIndexOutOfBoundsException) { "" },
         try { this.substring(index+1) } catch(e: StringIndexOutOfBoundsException) { "" })
 }
+
+internal fun String.messageFormat(vararg args: Any): String {
+    var str = this
+    for (i in args.indices)
+        str = str.replace("{$i}", args[i].toString())
+    return str
+}

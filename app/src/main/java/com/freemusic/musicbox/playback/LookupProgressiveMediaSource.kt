@@ -1,7 +1,6 @@
 package com.freemusic.musicbox.playback
 
 import android.net.Uri
-import android.util.Log
 import com.freemusic.musicbox.concurrent.Cancellable
 import com.freemusic.musicbox.concurrent.ResponseListener
 import com.google.android.exoplayer2.C

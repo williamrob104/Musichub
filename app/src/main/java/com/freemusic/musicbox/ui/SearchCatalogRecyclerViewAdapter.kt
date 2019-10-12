@@ -2,14 +2,12 @@ package com.freemusic.musicbox.ui
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.freemusic.musicbox.R
 import com.freemusic.musicbox.concurrent.ResponseListener
@@ -17,7 +15,7 @@ import com.freemusic.musicbox.playback.AppleMusicTrackMediaHolder
 import com.freemusic.musicbox.resource.*
 import com.freemusic.musicbox.singleton.Singleton
 import com.freemusic.musicbox.util.SpecialCharacters
-import java.text.MessageFormat
+import com.freemusic.musicbox.util.messageFormat
 
 
 class SearchCatalogRecyclerViewAdapter(
@@ -224,9 +222,9 @@ class SearchCatalogRecyclerViewAdapter(
                 2 -> R.string.label_music_tracks
                 else -> throw IllegalArgumentException()
             })
-            val viewAllString = context.resources.getString(R.string.label_term_viewall)
 
-            titleTextView.text = MessageFormat.format(viewAllString, entityTypeString)
+            titleTextView.text = context.resources.getString(R.string.label_term_viewall)
+                .messageFormat(entityTypeString)
         }
     }
 }

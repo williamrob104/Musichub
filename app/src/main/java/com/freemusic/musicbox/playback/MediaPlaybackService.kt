@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.media.AudioManager
-import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
 import android.support.v4.media.MediaDescriptionCompat
@@ -18,7 +17,6 @@ import android.util.Log
 import androidx.core.app.TaskStackBuilder
 import androidx.media.session.MediaButtonReceiver
 import com.freemusic.musicbox.R
-import com.freemusic.musicbox.concurrent.Cancellable
 import com.freemusic.musicbox.concurrent.ResponseListener
 import com.freemusic.musicbox.singleton.Flags
 import com.freemusic.musicbox.singleton.Singleton
@@ -30,11 +28,8 @@ import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import com.google.android.exoplayer2.upstream.DefaultDataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import java.util.concurrent.CopyOnWriteArraySet
 
 

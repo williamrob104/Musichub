@@ -3,7 +3,6 @@ package com.freemusic.musicbox.util
 import android.content.res.Resources
 import com.freemusic.musicbox.R
 import com.freemusic.musicbox.resource.Date
-import java.text.MessageFormat
 
 
 internal fun parseTime(timeStr: String): Int {
@@ -46,13 +45,12 @@ internal fun formatDate(resources: Resources, date: Date): String {
         else -> null
     }
     val monthStr = if (monthStrId == null) null else resources.getString(monthStrId)
-    val yearStr = date.year.toString()
-    return if (monthStr == null && date.day == null)
-        MessageFormat.format(resources.getString(R.string.label_date_1), yearStr)
-    else if (date.day != null)
-        MessageFormat.format(resources.getString(R.string.label_date_3), yearStr, monthStr, date.day)
+    return if (monthStr == null)
+        resources.getString(R.string.label_date_1).messageFormat(date.year)
+    else if (date.day == null)
+        resources.getString(R.string.label_date_2).messageFormat(date.year, monthStr)
     else
-        MessageFormat.format(resources.getString(R.string.label_date_2), yearStr, monthStr)
+        resources.getString(R.string.label_date_3).messageFormat(date.year, monthStr, date.day)
 }
 
 

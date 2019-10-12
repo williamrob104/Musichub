@@ -13,11 +13,8 @@ import com.freemusic.musicbox.networking.ImageRequests
 import com.freemusic.musicbox.networking.VolleyWrapper
 import com.freemusic.musicbox.resource.AppleMusicScraper
 import com.freemusic.musicbox.resource.YoutubeScraper
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.ObjectOutputStream
 import java.util.concurrent.Executors
-import java.util.concurrent.ThreadPoolExecutor
 
 
 object Singleton {
