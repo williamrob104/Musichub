@@ -53,29 +53,27 @@ class MediaPlaybackService: Service(), MediaPlayer {
     private var cacheShuffleEnabled: Boolean = false
 
     private val eventListener = object: Player.EventListener {
-        override fun onPlayerError(error: ExoPlaybackException?) {
+        override fun onPlayerError(error: ExoPlaybackException) {
             val tag = "MusicBox"
-            if (error != null) {
-                Log.i("MusicBox", "ExoPlayer.onPlayerError")
-                when (error.type) {
-                    ExoPlaybackException.TYPE_OUT_OF_MEMORY -> Log.i(
-                        tag,
-                        "out_of_memory",
-                        error.outOfMemoryError
-                    )
-                    ExoPlaybackException.TYPE_REMOTE -> Log.i(tag, "remote", error.cause)
-                    ExoPlaybackException.TYPE_RENDERER -> Log.i(
-                        tag,
-                        "render",
-                        error.rendererException
-                    )
-                    ExoPlaybackException.TYPE_SOURCE -> Log.i(tag, "source", error.sourceException)
-                    ExoPlaybackException.TYPE_UNEXPECTED -> Log.i(
-                        tag,
-                        "unexpected",
-                        error.unexpectedException
-                    )
-                }
+            Log.i("MusicBox", "ExoPlayer.onPlayerError")
+            when (error.type) {
+                ExoPlaybackException.TYPE_OUT_OF_MEMORY -> Log.i(
+                    tag,
+                    "out_of_memory",
+                    error.outOfMemoryError
+                )
+                ExoPlaybackException.TYPE_REMOTE -> Log.i(tag, "remote", error.cause)
+                ExoPlaybackException.TYPE_RENDERER -> Log.i(
+                    tag,
+                    "render",
+                    error.rendererException
+                )
+                ExoPlaybackException.TYPE_SOURCE -> Log.i(tag, "source", error.sourceException)
+                ExoPlaybackException.TYPE_UNEXPECTED -> Log.i(
+                    tag,
+                    "unexpected",
+                    error.unexpectedException
+                )
             }
         }
 
@@ -98,8 +96,7 @@ class MediaPlaybackService: Service(), MediaPlayer {
                 listener.onShuffleEnabledChanged(cacheShuffleEnabled)
         }
 
-
-        override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
+        override fun onTimelineChanged(timeline: Timeline, reason: Int) {
             for (listener in listeners)
                 listener.onMediaListChanged()
             checkOnMediaChanged()
@@ -150,20 +147,17 @@ class MediaPlaybackService: Service(), MediaPlayer {
         playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
             context, PLAYBACK_CHANNEL_ID, R.string.app_name, R.string.app_name, PLAYBACK_NOTIFICATION_ID,
             object: PlayerNotificationManager.MediaDescriptionAdapter {
-                override fun getCurrentContentTitle(player: Player?): String? {
-                    return if (player == null) null
-                           else mediaHolderList[player.currentWindowIndex].title
+                override fun getCurrentContentTitle(player: Player): String {
+                    return mediaHolderList[player.currentWindowIndex].title
                 }
 
-                override fun getCurrentContentText(player: Player?): String? {
-                    return if (player == null) null
-                           else mediaHolderList[player.currentWindowIndex].subtitle
+                override fun getCurrentContentText(player: Player): String? {
+                    return mediaHolderList[player.currentWindowIndex].subtitle
                 }
 
-                override fun getCurrentLargeIcon(player: Player?, callback: PlayerNotificationManager.BitmapCallback?): Bitmap? {
-                    val imageUrl = if (player == null) null
-                        else mediaHolderList[player.currentWindowIndex].image?.sourceByShortSideEquals(MediaHolder.LARGE_IMAGE_SIZE)?.url
-                    if (imageUrl != null && callback != null)
+                override fun getCurrentLargeIcon(player: Player, callback: PlayerNotificationManager.BitmapCallback): Bitmap? {
+                    val imageUrl = mediaHolderList[player.currentWindowIndex].image?.sourceByShortSideEquals(MediaHolder.LARGE_IMAGE_SIZE)?.url
+                    if (imageUrl != null)
                         Singleton.imageRequests.getImage(imageUrl, object: ResponseListener<Bitmap> {
                             override fun onResponse(response: Bitmap) {
                                 callback.onBitmap(response.squareCropTop())
@@ -174,7 +168,7 @@ class MediaPlaybackService: Service(), MediaPlayer {
                     return null
                 }
 
-                override fun createCurrentContentIntent(player: Player?): PendingIntent? {
+                override fun createCurrentContentIntent(player: Player): PendingIntent? {
                     val intent = Intent(context, MediaPlayActivity::class.java)
                     return TaskStackBuilder.create(this@MediaPlaybackService).run {
                         addNextIntentWithParentStack(intent)
@@ -183,7 +177,7 @@ class MediaPlaybackService: Service(), MediaPlayer {
                 }
             },
             object: PlayerNotificationManager.NotificationListener {
-                override fun onNotificationPosted(notificationId: Int, notification: Notification?, ongoing: Boolean) {
+                override fun onNotificationPosted(notificationId: Int, notification: Notification, ongoing: Boolean) {
                     startForeground(notificationId, notification)
                 }
 
@@ -217,7 +211,7 @@ class MediaPlaybackService: Service(), MediaPlayer {
 
         mediaSessionConnector = MediaSessionConnector(mediaSession)
         mediaSessionConnector.setQueueNavigator(object: TimelineQueueNavigator(mediaSession) {
-            override fun getMediaDescription(player: Player?, windowIndex: Int): MediaDescriptionCompat {
+            override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
                 return mediaHolderList[windowIndex].getMediaDescription(mediaSessionConnector::invalidateMediaSessionQueue)
             }
         })

@@ -6,6 +6,8 @@ import com.freemusic.musicbox.concurrent.Cancellable
 import com.freemusic.musicbox.concurrent.ResponseListener
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.SeekParameters
+import com.google.android.exoplayer2.drm.DrmSessionManager
+import com.google.android.exoplayer2.drm.ExoMediaCrypto
 import com.google.android.exoplayer2.extractor.Extractor
 import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.trackselection.TrackSelection
@@ -18,6 +20,7 @@ class LookupProgressiveMediaPeriod(
     private val lookupCallback: (ResponseListener<Uri>)->Cancellable,
     private val dataSource: DataSource,
     private val extractors: Array<Extractor>,
+    private val drmSessionManager: DrmSessionManager<ExoMediaCrypto>,
     private val loadErrorHandlingPolicy: LoadErrorHandlingPolicy,
     private val eventDispatcher: MediaSourceEventListener.EventDispatcher,
     private val listener: ProgressiveMediaPeriod.Listener,
@@ -36,6 +39,7 @@ class LookupProgressiveMediaPeriod(
                     response,
                     dataSource,
                     extractors,
+                    drmSessionManager,
                     loadErrorHandlingPolicy,
                     eventDispatcher,
                     listener,
@@ -57,7 +61,7 @@ class LookupProgressiveMediaPeriod(
             override fun onError(error: Exception) {
                 Log.i("MusicBox", "get uri error", error)
                 progressiveMediaPeriod = null
-                listener.onSourceInfoRefreshed(0, false)
+                listener.onSourceInfoRefreshed(0, false, false)
                 callback?.onPrepared(this@LookupProgressiveMediaPeriod)
             }
         })
@@ -108,6 +112,10 @@ class LookupProgressiveMediaPeriod(
 
     override fun continueLoading(positionUs: Long): Boolean {
         return progressiveMediaPeriod?.continueLoading(positionUs) ?: false
+    }
+
+    override fun isLoading(): Boolean {
+        return progressiveMediaPeriod?.isLoading ?: false
     }
 
     override fun reevaluateBuffer(positionUs: Long) {

@@ -4,6 +4,8 @@ import android.net.Uri
 import com.freemusic.musicbox.concurrent.Cancellable
 import com.freemusic.musicbox.concurrent.ResponseListener
 import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.drm.DrmSessionManager
+import com.google.android.exoplayer2.drm.ExoMediaCrypto
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.extractor.ExtractorsFactory
 import com.google.android.exoplayer2.source.*
@@ -16,6 +18,7 @@ class LookupProgressiveMediaSource private constructor(
     private val lookupCallback: (ResponseListener<Uri>)->Cancellable,
     private val dataSourceFactory: DataSource.Factory,
     private val extractorsFactory: ExtractorsFactory,
+    private val drmSessionManager: DrmSessionManager<ExoMediaCrypto>,
     private val loadableLoadErrorHandlingPolicy: LoadErrorHandlingPolicy,
     private val customCacheKey: String?,
     private val continueLoadingCheckIntervalBytes: Int,
@@ -26,6 +29,7 @@ class LookupProgressiveMediaSource private constructor(
                   private val extractorsFactory: ExtractorsFactory=DefaultExtractorsFactory()) {
         private var customCacheKey: String? = null
         private var tag: Any? = null
+        private var drmSessionManager: DrmSessionManager<ExoMediaCrypto> = DrmSessionManager.getDummyDrmSessionManager()
         private var loadErrorHandlingPolicy: LoadErrorHandlingPolicy = DefaultLoadErrorHandlingPolicy()
         private var continueLoadingCheckIntervalBytes: Int = DEFAULT_LOADING_CHECK_INTERVAL_BYTES
         private var isCreateCalled = false
@@ -54,12 +58,19 @@ class LookupProgressiveMediaSource private constructor(
             return this
         }
 
+        fun setDrmSessionManager(drmSessionManager: DrmSessionManager<ExoMediaCrypto>): Factory {
+            Assertions.checkState(!isCreateCalled)
+            this.drmSessionManager = drmSessionManager
+            return this
+        }
+
         fun createMediaSource(lookupCallback: (ResponseListener<Uri>)->Cancellable): LookupProgressiveMediaSource {
             isCreateCalled = true
             return LookupProgressiveMediaSource(
                 lookupCallback,
                 dataSourceFactory,
                 extractorsFactory,
+                drmSessionManager,
                 loadErrorHandlingPolicy,
                 customCacheKey,
                 continueLoadingCheckIntervalBytes,
@@ -98,6 +109,7 @@ class LookupProgressiveMediaSource private constructor(
             lookupCallback,
             dataSource,
             extractorsFactory.createExtractors(),
+            drmSessionManager,
             loadableLoadErrorHandlingPolicy,
             createEventDispatcher(id),
             this,
@@ -115,7 +127,7 @@ class LookupProgressiveMediaSource private constructor(
         // Do nothing.
     }
 
-    override fun onSourceInfoRefreshed(durationUs: Long, isSeekable: Boolean) {
+    override fun onSourceInfoRefreshed(durationUs: Long, isSeekable: Boolean, isLive: Boolean) {
         // If we already have the duration from a previous source info refresh, use it.
         val duration = if (durationUs == C.TIME_UNSET) timelineDurationUs else durationUs
         if (timelineDurationUs == duration && timelineIsSeekable == isSeekable) {
@@ -131,9 +143,8 @@ class LookupProgressiveMediaSource private constructor(
         timelineIsSeekable = isSeekable
         refreshSourceInfo(
             SinglePeriodTimeline(
-                timelineDurationUs, timelineIsSeekable, false, tag
-            ),
-            null
+                timelineDurationUs, timelineIsSeekable, false, false
+            )
         )
     }
 }
