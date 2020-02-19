@@ -52,8 +52,8 @@ class UrlParseTest {
 
     @Test fun testParseBaseUrl() {
         val     url  = "https://www.youtube.com/user/someone/about"
-        val baseUrl1 = "https://www.youtube.com/user/someone"
-        val baseUrl2 = "https://www.youtube.com/user/someone/"
+        val baseUrl1 = "https://www.youtube.com/"
+        val baseUrl2 = "https://www.youtube.com"
         val result = UrlParse.parseBaseUrl(url)
         assertTrue(result == baseUrl1 || result == baseUrl2)
     }

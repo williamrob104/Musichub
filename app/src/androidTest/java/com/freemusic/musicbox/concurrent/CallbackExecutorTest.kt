@@ -1,15 +1,18 @@
 package com.freemusic.musicbox.concurrent
 
+import android.os.Handler
 import android.os.Looper
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.concurrent.Executors
 
 
 class CallbackExecutorTest {
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
-    private val callbackExecutor = CallbackExecutor(context)
+    private val executorService = Executors.newFixedThreadPool(4)
+    private val callbackExecutor = CallbackExecutor(executorService, Handler(context.mainLooper))
 
     @Test fun testExecuteCallback() {
         var finished = false

@@ -68,9 +68,10 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
                 return "UTF-8"
             }
     }
+
     override fun <T> httpGETString(url: String, headers: Map<String, String>?,
-                                listener: ResponseListener<T>, converter: (String)->T) {
-        executor.execute(object: HttpRequestTask() {
+                                listener: ResponseListener<T>, converter: (String)->T): Cancellable {
+        val task = object: HttpRequestTask() {
             override fun run() {
                 try {
                     val con = requestGetConnection(url, headers, "GET")
@@ -84,12 +85,14 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
                         listener.onError(e)
                 }
             }
-        })
+        }
+        executor.execute(task)
+        return task
     }
 
     override fun <T> httpGETJson(url: String, headers: Map<String, String>?,
-                                 listener: ResponseListener<T>, converter: (JSONObject)->T) {
-        executor.execute(object: HttpRequestTask() {
+                                 listener: ResponseListener<T>, converter: (JSONObject)->T): Cancellable {
+        val task = object: HttpRequestTask() {
             override fun run() {
                 try {
                     val con = requestGetConnection(url, headers, "GET")
@@ -104,12 +107,14 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
                         listener.onError(e)
                 }
             }
-        })
+        }
+        executor.execute(task)
+        return task
     }
 
     override fun <T> httpGETHtml(url: String, headers: Map<String, String>?,
-                                 listener: ResponseListener<T>, converter: (Document)->T) {
-        executor.execute(object: HttpRequestTask() {
+                                 listener: ResponseListener<T>, converter: (Document)->T): Cancellable {
+        val task = object: HttpRequestTask() {
             override fun run() {
                 try {
                     val con = requestGetConnection(url, headers, "GET")
@@ -123,12 +128,14 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
                         listener.onError(e)
                 }
             }
-        })
+        }
+        executor.execute(task)
+        return task
     }
 
     override fun <T> httpPOSTJson(url: String, headers: Map<String, String>?, data: ByteArray?,
-                                  listener: ResponseListener<T>, converter: (JSONObject)->T) {
-        executor.execute(object: HttpRequestTask() {
+                                  listener: ResponseListener<T>, converter: (JSONObject)->T): Cancellable {
+        val task = object: HttpRequestTask() {
             override fun run() {
                 try {
                     val con = requestGetConnection(url, headers, "POST", false)
@@ -150,6 +157,8 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
                         listener.onError(e)
                 }
             }
-        })
+        }
+        executor.execute(task)
+        return task
     }
 }

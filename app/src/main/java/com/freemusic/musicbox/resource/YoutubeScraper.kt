@@ -111,14 +111,11 @@ class YoutubeScraper(private val basicHttpRequests: BasicHttpRequests,
     fun getVideoStreams(youtubeVideoId: String,
                         listener: ResponseListener<YoutubeVideoStreams>): Cancellable {
         return callbackExecutor.executeCallback(listener) {
-            val timeLogger = TimeLogger("MusicBox getVideoStreams")
             val params = mapOf("v" to youtubeVideoId, desktopParam)
             val watchUrl = joinUrl(baseUrl, "watch", params=encodeParams(params))
             val watchHtml = basicHttpRequests.get(watchUrl)
-            timeLogger.log("get html finished")
 
             val streamList = extractStreams(youtubeVideoId, watchHtml)
-            timeLogger.log("extract streams finished")
             YoutubeVideoStreams(streamList, youtubeVideoId)
         }
     }
@@ -190,6 +187,7 @@ class YoutubeScraper(private val basicHttpRequests: BasicHttpRequests,
         if (!ageRestricted) {
             val configJson = regexSearch(""";ytplayer\.config\s*=\s*(\{.*?\});""".toRegex(), watchHtml, group=1)
             val config = JSONObject(configJson)
+            println(config.getJSONObject("args").getString("player_response"))
             for (fmt in fmts) {
                 val streamJoint = config.getJSONObject("args").getStringOrNull(fmt)
                 if (streamJoint != null)
