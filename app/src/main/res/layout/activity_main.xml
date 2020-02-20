@@ -14,7 +14,7 @@
             android:layout_height="match_parent"
             android:layout_above="@id/activity_main_media_play_view" />
 
-    <com.freemusic.musicbox.ui.MediaPlayView
+    <com.musichub.ui.MediaPlayView
             android:id="@+id/activity_main_media_play_view"
             android:layout_width="match_parent"
             android:layout_height="55dp"

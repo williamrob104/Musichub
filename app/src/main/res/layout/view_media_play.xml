@@ -34,7 +34,7 @@
             app:layout_constraintStart_toEndOf="@+id/view_media_play_iv_coverart"
             app:layout_constraintTop_toTopOf="parent" />
 
-    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+    <com.musichub.ui.widget.TouchFadeImageView
             android:id="@+id/view_media_play_iv_play"
             android:layout_width="30dp"
             android:layout_height="30dp"

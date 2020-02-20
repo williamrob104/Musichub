@@ -28,7 +28,7 @@
                     android:layout_height="wrap_content"
                     app:layout_collapseMode="parallax">
 
-                <com.freemusic.musicbox.ui.widget.FadingImageView
+                <com.musichub.ui.widget.FadingImageView
                         android:id="@+id/fragment_catalog_artist_iv_avatar"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
@@ -51,7 +51,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.freemusic.musicbox.ui.widget.RoundedTouchFadeTextView
+    <com.musichub.ui.widget.RoundedTouchFadeTextView
             android:id="@+id/fragment_catalog_album_tv_play"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
@@ -83,7 +83,7 @@
                 android:paddingTop="40dp"
                 android:paddingBottom="100dp">
 
-            <com.freemusic.musicbox.ui.widget.TouchFadeTextView
+            <com.musichub.ui.widget.TouchFadeTextView
                     android:id="@+id/fragment_catalog_artist_tv_topsongs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

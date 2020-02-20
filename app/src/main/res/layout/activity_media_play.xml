@@ -105,7 +105,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/activity_play_sb_timeline" />
 
-    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+    <com.musichub.ui.widget.TouchFadeImageView
             android:id="@+id/activity_play_iv_favorite"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -122,7 +122,7 @@
             custom:fade_duration="50"
             custom:fade_size_factor="0.95" />
 
-    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+    <com.musichub.ui.widget.TouchFadeImageView
             android:id="@+id/activity_play_iv_prev"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -136,7 +136,7 @@
             custom:fade_duration="50"
             custom:fade_size_factor="0.95" />
 
-    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+    <com.musichub.ui.widget.TouchFadeImageView
             android:id="@+id/activity_play_iv_play"
             android:layout_width="64dp"
             android:layout_height="64dp"
@@ -150,7 +150,7 @@
             custom:fade_duration="50"
             custom:fade_size_factor="0.95" />
 
-    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+    <com.musichub.ui.widget.TouchFadeImageView
             android:id="@+id/activity_play_iv_next"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -164,7 +164,7 @@
             custom:fade_duration="50"
             custom:fade_size_factor="0.95" />
 
-    <com.freemusic.musicbox.ui.widget.TouchFadeImageView
+    <com.musichub.ui.widget.TouchFadeImageView
             android:id="@+id/activity_play_iv_mode"
             android:layout_width="30dp"
             android:layout_height="30dp"

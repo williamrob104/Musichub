@@ -79,7 +79,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/fragment_catalog_album_tv_title" />
 
-                <com.freemusic.musicbox.ui.widget.RoundedTouchFadeTextView
+                <com.musichub.ui.widget.RoundedTouchFadeTextView
                         android:id="@+id/fragment_catalog_album_tv_play"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"

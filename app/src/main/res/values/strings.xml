@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">MusicBox</string>
+    <string name="app_name" translatable="false">Musichub</string>
     <string name="label_home">Home</string>
     <string name="label_library">Your Music Library</string>
     <string name="label_search">Search</string>

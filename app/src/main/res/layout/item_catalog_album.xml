@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.freemusic.musicbox.ui.widget.TouchFadeFrameLayout
+<com.musichub.ui.widget.TouchFadeFrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:custom="http://schemas.android.com/apk/res-auto"
@@ -66,4 +66,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</com.freemusic.musicbox.ui.widget.TouchFadeFrameLayout>
+</com.musichub.ui.widget.TouchFadeFrameLayout>
