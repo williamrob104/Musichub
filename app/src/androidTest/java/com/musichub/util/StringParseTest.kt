@@ -5,7 +5,8 @@ import org.junit.Test
 
 
 class StringParseTest {
-    @Test fun testFormatTime() {
+    @Test
+    fun testFormatTime() {
         val suits = listOf(
             3601 to "1:00:01",
             601 to "10:01",

@@ -11,17 +11,19 @@ import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 
 
-class VolleyWrapper(private val requestQueue: RequestQueue): BasicHttpRequests {
+class VolleyWrapper(private val requestQueue: RequestQueue) : BasicHttpRequests {
 
     private fun myRetryPolicy() =
         DefaultRetryPolicy(2500, 3, 1f)
 
-    override fun <T> httpGETString(url: String, headers: Map<String, String>?,
-                                   listener: ResponseListener<T>, converter: (String) -> T): Cancellable {
+    override fun <T> httpGETString(
+        url: String, headers: Map<String, String>?,
+        listener: ResponseListener<T>, converter: (String) -> T
+    ): Cancellable {
         return StringConvertRequest(
             Request.Method.GET, url, headers, converter,
             Response.Listener { listener.onResponse(it) },
-            Response.ErrorListener { listener.onError(it)}
+            Response.ErrorListener { listener.onError(it) }
         ).apply {
             setShouldRetryServerErrors(true)
             setRetryPolicy(myRetryPolicy())
@@ -29,12 +31,14 @@ class VolleyWrapper(private val requestQueue: RequestQueue): BasicHttpRequests {
         }.asCancellable()
     }
 
-    override fun <T> httpGETJson(url: String, headers: Map<String, String>?,
-                                 listener: ResponseListener<T>, converter: (JSONObject) -> T): Cancellable {
+    override fun <T> httpGETJson(
+        url: String, headers: Map<String, String>?,
+        listener: ResponseListener<T>, converter: (JSONObject) -> T
+    ): Cancellable {
         return JsonConvertRequest(
             Request.Method.GET, url, headers, converter,
             Response.Listener { listener.onResponse(it) },
-            Response.ErrorListener { listener.onError(it)}
+            Response.ErrorListener { listener.onError(it) }
         ).apply {
             setShouldRetryServerErrors(true)
             setRetryPolicy(myRetryPolicy())
@@ -42,12 +46,14 @@ class VolleyWrapper(private val requestQueue: RequestQueue): BasicHttpRequests {
         }.asCancellable()
     }
 
-    override fun <T> httpGETHtml(url: String, headers: Map<String, String>?,
-                                 listener: ResponseListener<T>, converter: (Document) -> T): Cancellable {
+    override fun <T> httpGETHtml(
+        url: String, headers: Map<String, String>?,
+        listener: ResponseListener<T>, converter: (Document) -> T
+    ): Cancellable {
         return HtmlConvertRequest(
             Request.Method.GET, url, headers, converter,
             Response.Listener { listener.onResponse(it) },
-            Response.ErrorListener { listener.onError(it)}
+            Response.ErrorListener { listener.onError(it) }
         ).apply {
             setShouldRetryServerErrors(true)
             setRetryPolicy(myRetryPolicy())
@@ -55,12 +61,14 @@ class VolleyWrapper(private val requestQueue: RequestQueue): BasicHttpRequests {
         }.asCancellable()
     }
 
-    override fun <T> httpPOSTJson(url: String, headers: Map<String, String>?, data: ByteArray?,
-                                  listener: ResponseListener<T>, converter: (JSONObject) -> T): Cancellable {
-        return object: JsonConvertRequest<T>(
+    override fun <T> httpPOSTJson(
+        url: String, headers: Map<String, String>?, data: ByteArray?,
+        listener: ResponseListener<T>, converter: (JSONObject) -> T
+    ): Cancellable {
+        return object : JsonConvertRequest<T>(
             Request.Method.POST, url, headers, converter,
             Response.Listener { listener.onResponse(it) },
-            Response.ErrorListener { listener.onError(it)}
+            Response.ErrorListener { listener.onError(it) }
         ) {
             override fun getBody(): ByteArray {
                 return data ?: super.getBody()
@@ -73,17 +81,19 @@ class VolleyWrapper(private val requestQueue: RequestQueue): BasicHttpRequests {
     }
 
     private fun <T> Request<T>.asCancellable(): Cancellable {
-        return object: Cancellable {
+        return object : Cancellable {
             override fun cancel() = this@asCancellable.cancel()
             override fun isCancelled() = this@asCancellable.isCanceled
         }
     }
 }
 
-private class StringConvertRequest<T>(method: Int, url: String, private val myHeaders: Map<String, String>?,
-                              private val converter: (String)->T,
-                              private val listener: Response.Listener<T>,
-                              errorListener: Response.ErrorListener):
+private class StringConvertRequest<T>(
+    method: Int, url: String, private val myHeaders: Map<String, String>?,
+    private val converter: (String) -> T,
+    private val listener: Response.Listener<T>,
+    errorListener: Response.ErrorListener
+) :
     Request<T>(method, url, errorListener) {
     override fun parseNetworkResponse(response: NetworkResponse?): Response<T> {
         return try {
@@ -95,8 +105,7 @@ private class StringConvertRequest<T>(method: Int, url: String, private val myHe
                 responseT,
                 HttpHeaderParser.parseCacheHeaders(response)
             )
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Response.error(VolleyError(e))
         }
     }
@@ -111,10 +120,12 @@ private class StringConvertRequest<T>(method: Int, url: String, private val myHe
 }
 
 
-private open class JsonConvertRequest<T>(method: Int, url: String, private val myHeaders: Map<String, String>?,
-                              private val converter: (JSONObject)->T,
-                              private val listener: Response.Listener<T>,
-                              errorListener: Response.ErrorListener):
+private open class JsonConvertRequest<T>(
+    method: Int, url: String, private val myHeaders: Map<String, String>?,
+    private val converter: (JSONObject) -> T,
+    private val listener: Response.Listener<T>,
+    errorListener: Response.ErrorListener
+) :
     Request<T>(method, url, errorListener) {
     override fun parseNetworkResponse(response: NetworkResponse?): Response<T> {
         return try {
@@ -127,8 +138,7 @@ private open class JsonConvertRequest<T>(method: Int, url: String, private val m
                 responseT,
                 HttpHeaderParser.parseCacheHeaders(response)
             )
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Response.error(VolleyError(e))
         }
     }
@@ -143,10 +153,12 @@ private open class JsonConvertRequest<T>(method: Int, url: String, private val m
 }
 
 
-private class HtmlConvertRequest<T>(method: Int, url: String, private val myHeaders: Map<String, String>?,
-                            private val converter: (Document)->T,
-                            private val listener: Response.Listener<T>,
-                            errorListener: Response.ErrorListener):
+private class HtmlConvertRequest<T>(
+    method: Int, url: String, private val myHeaders: Map<String, String>?,
+    private val converter: (Document) -> T,
+    private val listener: Response.Listener<T>,
+    errorListener: Response.ErrorListener
+) :
     Request<T>(method, url, errorListener) {
     override fun parseNetworkResponse(response: NetworkResponse?): Response<T> {
         return try {
@@ -160,8 +172,7 @@ private class HtmlConvertRequest<T>(method: Int, url: String, private val myHead
                 responseT,
                 HttpHeaderParser.parseCacheHeaders(response)
             )
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Response.error(VolleyError(e))
         }
     }

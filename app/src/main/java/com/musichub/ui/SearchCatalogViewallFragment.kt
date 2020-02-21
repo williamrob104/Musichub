@@ -13,15 +13,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.musichub.R
 import com.musichub.concurrent.Cancellable
 import com.musichub.concurrent.ResponseListener
-import com.musichub.resource.AppleMusicEntity
-import com.musichub.resource.AppleMusicSearch
+import com.musichub.scraper.AppleMusicEntity
+import com.musichub.scraper.AppleMusicSearch
 import com.musichub.singleton.Singleton
 import com.musichub.util.messageFormat
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
 
-class SearchCatalogViewallFragment: Fragment() {
+class SearchCatalogViewallFragment : Fragment() {
     private var entityType = 0
     private lateinit var query: String
     private val LIMIT = 30
@@ -60,7 +60,11 @@ class SearchCatalogViewallFragment: Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_search_catalog_viewall, container, false)
     }
 
@@ -78,12 +82,14 @@ class SearchCatalogViewallFragment: Fragment() {
 
 
         toolbar = view.findViewById(R.id.fragment_search_catalog_viewall_tb_title)
-        val entityTypeString = context!!.resources.getString(when(entityType) {
-            0 -> R.string.label_music_artist
-            1 -> R.string.label_music_album
-            2 -> R.string.label_music_track
-            else -> throw IllegalArgumentException()
-        })
+        val entityTypeString = context!!.resources.getString(
+            when (entityType) {
+                0 -> R.string.label_music_artist
+                1 -> R.string.label_music_album
+                2 -> R.string.label_music_track
+                else -> throw IllegalArgumentException()
+            }
+        )
         toolbar.title = context!!.resources.getString(R.string.label_term_containing).messageFormat(
             entityTypeString, query
         )
@@ -108,14 +114,14 @@ class SearchCatalogViewallFragment: Fragment() {
         progressBar.visibility = View.VISIBLE
         textViewMsg.visibility = View.INVISIBLE
 
-        when(entityType) {
+        when (entityType) {
             0 -> Singleton.appleMusicScraper.searchArtists(query, LIMIT, 0, initializeCallback())
             1 -> Singleton.appleMusicScraper.searchAlbums(query, LIMIT, 0, initializeCallback())
             2 -> Singleton.appleMusicScraper.searchSongs(query, LIMIT, 0, initializeCallback())
             else -> null
         }.let { if (it != null) requestCancellable.add(it) }
 
-        recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
@@ -125,10 +131,25 @@ class SearchCatalogViewallFragment: Fragment() {
 
                 if (layoutManager.findLastVisibleItemPosition() >= currentSize - 10 && !updating && !endTouched) {
                     updating = true
-                    when(entityType) {
-                        0 -> Singleton.appleMusicScraper.searchArtists(query, LIMIT, currentSize, updateCallback())
-                        1 -> Singleton.appleMusicScraper.searchAlbums(query, LIMIT, currentSize, updateCallback())
-                        2 -> Singleton.appleMusicScraper.searchSongs(query, LIMIT, currentSize, updateCallback())
+                    when (entityType) {
+                        0 -> Singleton.appleMusicScraper.searchArtists(
+                            query,
+                            LIMIT,
+                            currentSize,
+                            updateCallback()
+                        )
+                        1 -> Singleton.appleMusicScraper.searchAlbums(
+                            query,
+                            LIMIT,
+                            currentSize,
+                            updateCallback()
+                        )
+                        2 -> Singleton.appleMusicScraper.searchSongs(
+                            query,
+                            LIMIT,
+                            currentSize,
+                            updateCallback()
+                        )
                         else -> null
                     }.let { if (it != null) requestCancellable.add(it) }
                 }
@@ -136,8 +157,8 @@ class SearchCatalogViewallFragment: Fragment() {
         })
     }
 
-    private fun <T: AppleMusicEntity> initializeCallback(): ResponseListener<AppleMusicSearch<T>> {
-        return object: ResponseListener<AppleMusicSearch<T>> {
+    private fun <T : AppleMusicEntity> initializeCallback(): ResponseListener<AppleMusicSearch<T>> {
+        return object : ResponseListener<AppleMusicSearch<T>> {
             override fun onResponse(response: AppleMusicSearch<T>) {
                 val entityList = response.itemList
                 if (entityList.isNotEmpty()) {
@@ -149,8 +170,7 @@ class SearchCatalogViewallFragment: Fragment() {
                     recyclerView.adapter = SearchCatalogRecyclerViewAdapter(
                         context!!, activity as MainActivityAction, entityList, null, false
                     )
-                }
-                else {
+                } else {
                     progressBar.visibility = View.INVISIBLE
                     textViewMsg.visibility = View.VISIBLE
                     textViewMsg.text = resources.getString(R.string.msg_no_matching_result)
@@ -168,14 +188,15 @@ class SearchCatalogViewallFragment: Fragment() {
         }
     }
 
-    private fun <T: AppleMusicEntity> updateCallback(): ResponseListener<AppleMusicSearch<T>> {
-        return object: ResponseListener<AppleMusicSearch<T>> {
+    private fun <T : AppleMusicEntity> updateCallback(): ResponseListener<AppleMusicSearch<T>> {
+        return object : ResponseListener<AppleMusicSearch<T>> {
             override fun onResponse(response: AppleMusicSearch<T>) {
                 val entityList = response.itemList
                 if (entityList.isNotEmpty()) {
                     if (entityList.size < LIMIT)
                         endTouched = true
-                    val adapter = recyclerView.adapter as SearchCatalogRecyclerViewAdapter? ?: return
+                    val adapter =
+                        recyclerView.adapter as SearchCatalogRecyclerViewAdapter? ?: return
                     val oldSize = adapter.entityList.size
                     for (entity in entityList) {
                         if (entitySet.add(entity))
@@ -183,8 +204,7 @@ class SearchCatalogViewallFragment: Fragment() {
                     }
                     val newSize = adapter.entityList.size
                     adapter.notifyItemRangeInserted(oldSize, newSize - oldSize)
-                }
-                else {
+                } else {
                     endTouched = true
                 }
                 updating = false

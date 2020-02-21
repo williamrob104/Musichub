@@ -22,8 +22,8 @@ import com.musichub.R
 import com.musichub.concurrent.Cancellable
 import com.musichub.concurrent.ResponseListener
 import com.musichub.playback.AppleMusicTrackMediaHolder
-import com.musichub.resource.AppleMusicAlbumBrowse
-import com.musichub.resource.AppleMusicTrack
+import com.musichub.scraper.AppleMusicAlbumBrowse
+import com.musichub.scraper.AppleMusicTrack
 import com.musichub.singleton.Singleton
 import com.musichub.ui.widget.RoundedTouchFadeTextView
 import com.musichub.util.SpecialCharacters
@@ -66,7 +66,11 @@ class CatalogAlbumFragment : Fragment() {
         mainActivityAction = activity as MainActivityAction
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_catalog_album, container, false)
     }
 
@@ -103,7 +107,7 @@ class CatalogAlbumFragment : Fragment() {
         textViewError.visibility = View.INVISIBLE
         textViewPlay.visibility = View.INVISIBLE
         cancellable = Singleton.appleMusicScraper.browseAlbum(albumViewUrl,
-            object: ResponseListener<AppleMusicAlbumBrowse> {
+            object : ResponseListener<AppleMusicAlbumBrowse> {
                 override fun onResponse(response: AppleMusicAlbumBrowse) {
                     progressBar.visibility = View.INVISIBLE
                     toolbar.title = response.title
@@ -122,21 +126,27 @@ class CatalogAlbumFragment : Fragment() {
     private fun setContent(album: AppleMusicAlbumBrowse) {
         val imageUrl = album.coverart?.sourceByShortSideEquals(300)?.url
         if (imageUrl != null)
-            Singleton.imageRequests.getImage(imageUrl, object: ResponseListener<Bitmap> {
+            Singleton.imageRequests.getImage(imageUrl, object : ResponseListener<Bitmap> {
                 override fun onResponse(response: Bitmap) {
                     imageViewCoverart.setImageBitmap(response)
 
-                    val defaultColor = ContextCompat.getColor(context!!, R.color.contentBgColorLight)
+                    val defaultColor =
+                        ContextCompat.getColor(context!!, R.color.contentBgColorLight)
                     val color = Palette.from(response).generate().getMutedColor(defaultColor)
-                    val color2 = Color.argb(0, Color.red(color), Color.green(color), Color.blue(color))
-                    val bg = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(color, color2))
+                    val color2 =
+                        Color.argb(0, Color.red(color), Color.green(color), Color.blue(color))
+                    val bg = GradientDrawable(
+                        GradientDrawable.Orientation.TOP_BOTTOM,
+                        intArrayOf(color, color2)
+                    )
                     constraintLayout.background = bg
                 }
 
                 override fun onError(error: Exception) {}
             })
         textViewTitle.text = album.title
-        textViewLabel.text = "${album.releaseDate.year} ${SpecialCharacters.smblkcircle} ${album.artistName}"
+        textViewLabel.text =
+            "${album.releaseDate.year} ${SpecialCharacters.smblkcircle} ${album.artistName}"
 
         val trackList = album.songList
         if (trackList.isEmpty())
@@ -163,7 +173,8 @@ class CatalogAlbumFragment : Fragment() {
 
     private var imageSize: Int? = null
     private fun makeTrackView(track: AppleMusicTrack): View {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_catalog_track, linearLayout, false)
+        val view =
+            LayoutInflater.from(context).inflate(R.layout.item_catalog_track, linearLayout, false)
         val imageViewCoverart: ImageView = view.findViewById(R.id.item_catalog_track_iv_coverart)
         val textViewTitle: TextView = view.findViewById(R.id.item_catalog_track_tv_title)
         val textViewLabel: TextView = view.findViewById(R.id.item_catalog_track_tv_label)
@@ -173,10 +184,11 @@ class CatalogAlbumFragment : Fragment() {
 
         if (imageSize == null)
             imageSize = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 60f, context!!.resources.displayMetrics).toInt()
+                TypedValue.COMPLEX_UNIT_DIP, 60f, context!!.resources.displayMetrics
+            ).toInt()
         val imageUrl = track.coverart?.sourceByShortSideEquals(imageSize!!)?.url
         if (imageUrl != null)
-            Singleton.imageRequests.getImage(imageUrl, object: ResponseListener<Bitmap> {
+            Singleton.imageRequests.getImage(imageUrl, object : ResponseListener<Bitmap> {
                 override fun onResponse(response: Bitmap) {
                     imageViewCoverart.setImageBitmap(response)
                 }
@@ -188,15 +200,20 @@ class CatalogAlbumFragment : Fragment() {
 
     private fun setInfo(album: AppleMusicAlbumBrowse) {
         val margin = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 15f, context!!.resources.displayMetrics).toInt()
+            TypedValue.COMPLEX_UNIT_DIP, 15f, context!!.resources.displayMetrics
+        ).toInt()
 
         val textViewDate = TextView(context).apply {
             text = formatDate(resources, album.releaseDate)
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.content_medium_text_size))
+            setTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                resources.getDimension(R.dimen.content_medium_text_size)
+            )
             setTextColor(ContextCompat.getColor(context, R.color.contentColorPrimary))
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
                 setMargins(margin, 40, margin, 0)
             }
         }
@@ -205,11 +222,15 @@ class CatalogAlbumFragment : Fragment() {
         val note = album.noteStandard ?: album.noteShort ?: return
         val textViewNote = TextView(context).apply {
             text = note
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.content_small_text_size))
+            setTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                resources.getDimension(R.dimen.content_small_text_size)
+            )
             setTextColor(ContextCompat.getColor(context, R.color.contentColorPrimary))
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
                 setMargins(margin, 30, margin, 0)
             }
         }

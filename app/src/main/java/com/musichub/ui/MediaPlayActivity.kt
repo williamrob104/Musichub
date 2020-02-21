@@ -50,7 +50,7 @@ class MediaPlayActivity : AppCompatActivity() {
 
     private var imageLoadCancellable: Cancellable? = null
 
-    private val serviceConnection = object: ServiceConnection {
+    private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as MediaPlaybackService.PlaybackServiceBinder
             player = binder.getService()
@@ -65,7 +65,8 @@ class MediaPlayActivity : AppCompatActivity() {
                 timelineUpdateTask,
                 0,
                 500,
-                TimeUnit.MILLISECONDS)
+                TimeUnit.MILLISECONDS
+            )
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -77,7 +78,8 @@ class MediaPlayActivity : AppCompatActivity() {
     private var timelineDurationIsSet = false
     private var timelineIsSeeking = false
 
-    private val timelineUpdateExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
+    private val timelineUpdateExecutor: ScheduledExecutorService =
+        Executors.newSingleThreadScheduledExecutor()
     private var timelineUpdateFuture: ScheduledFuture<*>? = null
     private val timelineUpdateTask = {
         if (!timelineDurationIsSet)
@@ -98,7 +100,7 @@ class MediaPlayActivity : AppCompatActivity() {
             }
     }
 
-    private val eventListener = object: MediaPlayer.EventListener {
+    private val eventListener = object : MediaPlayer.EventListener {
 
         override fun onMediaChanged(mediaHolder: MediaHolder?) {
             displayPrevNext()
@@ -122,7 +124,10 @@ class MediaPlayActivity : AppCompatActivity() {
             imageViewNext.setTouchable(player.hasNext)
         }
 
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: MediaPlayer.PlaybackState) {
+        override fun onPlayerStateChanged(
+            playWhenReady: Boolean,
+            playbackState: MediaPlayer.PlaybackState
+        ) {
             if (!playWhenReady || playbackState == MediaPlayer.PlaybackState.ENDED)
                 imageViewPlay.setImageResource(R.drawable.ic_media_circle_play)
             else
@@ -143,7 +148,7 @@ class MediaPlayActivity : AppCompatActivity() {
             val temp = player.customMode
             if (temp != currentCustomMode) {
                 currentCustomMode = temp
-                val resId = when(temp) {
+                val resId = when (temp) {
                     CustomMode.Linear -> R.drawable.ic_media_no_shuffle
                     CustomMode.Shuffle -> R.drawable.ic_media_shuffle
                     CustomMode.RepeatOne -> R.drawable.ic_media_repeat_one
@@ -160,15 +165,14 @@ class MediaPlayActivity : AppCompatActivity() {
                 player.playWhenReady = true
                 if (player.playbackState == MediaPlayer.PlaybackState.ENDED)
                     player.changeMedia(0)
-            }
-            else {
+            } else {
                 player.playWhenReady = false
             }
         }
 
         seekbarTimeline.setOnTouchListener { _, _ -> !timelineDurationIsSet }
 
-        seekbarTimeline.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+        seekbarTimeline.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 textViewPosition.text = formatTime((progress * 1e-3).toInt())
             }
@@ -212,13 +216,13 @@ class MediaPlayActivity : AppCompatActivity() {
             private val toast = Toast.makeText(this@MediaPlayActivity, "", Toast.LENGTH_SHORT)
             override fun onClick(v: View?) {
                 if (v !is TouchFadeImageView) return
-                val nextMode = when(player.customMode) {
+                val nextMode = when (player.customMode) {
                     CustomMode.Linear -> CustomMode.Shuffle
                     CustomMode.Shuffle -> CustomMode.RepeatOne
                     CustomMode.RepeatOne -> CustomMode.Linear
                 }
                 player.customMode = nextMode
-                val strId = when(nextMode) {
+                val strId = when (nextMode) {
                     CustomMode.Linear -> R.string.label_media_mode_linear
                     CustomMode.Shuffle -> R.string.label_media_mode_shuffle
                     CustomMode.RepeatOne -> R.string.label_media_mode_repeat_one
@@ -239,13 +243,14 @@ class MediaPlayActivity : AppCompatActivity() {
 
         val imageUrl = track.coverart?.sourceByShortSideEquals(MediaHolder.LARGE_IMAGE_SIZE)?.url
         if (imageUrl != null)
-            imageLoadCancellable = Singleton.imageRequests.getImage(imageUrl, object: ResponseListener<Bitmap> {
-                override fun onResponse(response: Bitmap) {
-                    imageViewCoverart.setImageBitmap(response)
-                }
+            imageLoadCancellable =
+                Singleton.imageRequests.getImage(imageUrl, object : ResponseListener<Bitmap> {
+                    override fun onResponse(response: Bitmap) {
+                        imageViewCoverart.setImageBitmap(response)
+                    }
 
-                override fun onError(error: Exception) {}
-            })
+                    override fun onError(error: Exception) {}
+                })
     }
 
     private fun initMedia(mediaHolder: YoutubeVideoMediaHolder) {
@@ -313,14 +318,16 @@ var MediaPlayer.customMode: CustomMode
         }
     }
     set(value) {
-        when(value) {
+        when (value) {
             CustomMode.RepeatOne -> this.repeatMode = MediaPlayer.RepeatMode.ONE
             CustomMode.Shuffle -> {
-                this.repeatMode = if (this.mediaCount == 1) MediaPlayer.RepeatMode.OFF else MediaPlayer.RepeatMode.ALL
+                this.repeatMode =
+                    if (this.mediaCount == 1) MediaPlayer.RepeatMode.OFF else MediaPlayer.RepeatMode.ALL
                 this.shuffleEnabled = true
             }
             CustomMode.Linear -> {
-                this.repeatMode = if (this.mediaCount == 1) MediaPlayer.RepeatMode.OFF else MediaPlayer.RepeatMode.ALL
+                this.repeatMode =
+                    if (this.mediaCount == 1) MediaPlayer.RepeatMode.OFF else MediaPlayer.RepeatMode.ALL
                 this.shuffleEnabled = false
             }
         }

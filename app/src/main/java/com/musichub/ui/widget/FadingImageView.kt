@@ -6,7 +6,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.musichub.R
 
 
-class FadingImageView: AppCompatImageView {
+class FadingImageView : AppCompatImageView {
 
     var fadeLeft: Boolean = false
     var fadeRight: Boolean = false
@@ -15,21 +15,26 @@ class FadingImageView: AppCompatImageView {
 
     private val defautFadingWidth = 30
 
-    constructor(context: Context): super(context) {
+    constructor(context: Context) : super(context) {
         this.setFadingEdgeLength(defautFadingWidth)
     }
 
-    constructor(context: Context, attrs: AttributeSet?): super(context, attrs)  {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         extractAttrs(attrs, 0, 0)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
             super(context, attrs, defStyleAttr) {
         extractAttrs(attrs, defStyleAttr, 0)
     }
 
     private fun extractAttrs(attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) {
-        val a = context.theme.obtainStyledAttributes(attrs, R.styleable.FadingImageView, defStyleAttr, defStyleRes)
+        val a = context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.FadingImageView,
+            defStyleAttr,
+            defStyleRes
+        )
         try {
             val sidesInt = a.getInt(R.styleable.FadingImageView_fadingSides, 0)
             fadeLeft = (sidesInt and (1 shl 0)) != 0
@@ -37,10 +42,12 @@ class FadingImageView: AppCompatImageView {
             fadeTop = (sidesInt and (1 shl 2)) != 0
             fadeBottom = (sidesInt and (1 shl 3)) != 0
 
-            val fadingWidth = a.getDimensionPixelSize(R.styleable.FadingImageView_fadingEdgeWidth, defautFadingWidth)
+            val fadingWidth = a.getDimensionPixelSize(
+                R.styleable.FadingImageView_fadingEdgeWidth,
+                defautFadingWidth
+            )
             this.setFadingEdgeLength(fadingWidth)
-        }
-        finally {
+        } finally {
             a.recycle()
         }
     }

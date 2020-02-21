@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 
-class RequestFuture<T>: ResponseListener<T>, Future<T> {
+class RequestFuture<T> : ResponseListener<T>, Future<T> {
     private var mResponse: T? = null
     private var mError: Exception? = null
     private var doneLock = Object()
@@ -55,8 +55,7 @@ class RequestFuture<T>: ResponseListener<T>, Future<T> {
         if (timeoutMs == null) {
             while (!isDone)
                 doneLock.wait(0)
-        }
-        else if (timeoutMs > 0) {
+        } else if (timeoutMs > 0) {
             var nowMs = System.currentTimeMillis()
             val deadlineMs = nowMs + timeoutMs
             while (!isDone && nowMs < deadlineMs) {

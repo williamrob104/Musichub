@@ -14,11 +14,12 @@ class CallbackExecutorTest {
     private val executorService = Executors.newFixedThreadPool(4)
     private val callbackExecutor = CallbackExecutor(executorService, Handler(context.mainLooper))
 
-    @Test fun testExecuteCallback() {
+    @Test
+    fun testExecuteCallback() {
         var finished = false
         var succeed = false
 
-        callbackExecutor.executeCallback(object: ResponseListener<Int> {
+        callbackExecutor.executeCallback(object : ResponseListener<Int> {
             override fun onResponse(response: Int) {
                 succeed = Looper.myLooper() == context.mainLooper
                 finished = true
@@ -29,7 +30,8 @@ class CallbackExecutorTest {
             }
         }) { 1927 }
 
-        while (!finished) {}
+        while (!finished) {
+        }
 
         assertTrue(succeed)
     }

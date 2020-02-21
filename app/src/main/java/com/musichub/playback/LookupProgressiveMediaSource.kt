@@ -1,8 +1,6 @@
 package com.musichub.playback
 
 import android.net.Uri
-import com.musichub.concurrent.Cancellable
-import com.musichub.concurrent.ResponseListener
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.drm.DrmSessionManager
 import com.google.android.exoplayer2.drm.ExoMediaCrypto
@@ -11,11 +9,13 @@ import com.google.android.exoplayer2.extractor.ExtractorsFactory
 import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.upstream.*
 import com.google.android.exoplayer2.util.Assertions
+import com.musichub.concurrent.Cancellable
+import com.musichub.concurrent.ResponseListener
 import java.io.IOException
 
 
 class LookupProgressiveMediaSource private constructor(
-    private val lookupCallback: (ResponseListener<Uri>)->Cancellable,
+    private val lookupCallback: (ResponseListener<Uri>) -> Cancellable,
     private val dataSourceFactory: DataSource.Factory,
     private val extractorsFactory: ExtractorsFactory,
     private val drmSessionManager: DrmSessionManager<ExoMediaCrypto>,
@@ -23,14 +23,18 @@ class LookupProgressiveMediaSource private constructor(
     private val customCacheKey: String?,
     private val continueLoadingCheckIntervalBytes: Int,
     private val _tag: Any?
-): BaseMediaSource(), ProgressiveMediaPeriod.Listener {
+) : BaseMediaSource(), ProgressiveMediaPeriod.Listener {
 
-    class Factory(private val dataSourceFactory: DataSource.Factory,
-                  private val extractorsFactory: ExtractorsFactory=DefaultExtractorsFactory()) {
+    class Factory(
+        private val dataSourceFactory: DataSource.Factory,
+        private val extractorsFactory: ExtractorsFactory = DefaultExtractorsFactory()
+    ) {
         private var customCacheKey: String? = null
         private var tag: Any? = null
-        private var drmSessionManager: DrmSessionManager<ExoMediaCrypto> = DrmSessionManager.getDummyDrmSessionManager()
-        private var loadErrorHandlingPolicy: LoadErrorHandlingPolicy = DefaultLoadErrorHandlingPolicy()
+        private var drmSessionManager: DrmSessionManager<ExoMediaCrypto> =
+            DrmSessionManager.getDummyDrmSessionManager()
+        private var loadErrorHandlingPolicy: LoadErrorHandlingPolicy =
+            DefaultLoadErrorHandlingPolicy()
         private var continueLoadingCheckIntervalBytes: Int = DEFAULT_LOADING_CHECK_INTERVAL_BYTES
         private var isCreateCalled = false
 
@@ -64,7 +68,7 @@ class LookupProgressiveMediaSource private constructor(
             return this
         }
 
-        fun createMediaSource(lookupCallback: (ResponseListener<Uri>)->Cancellable): LookupProgressiveMediaSource {
+        fun createMediaSource(lookupCallback: (ResponseListener<Uri>) -> Cancellable): LookupProgressiveMediaSource {
             isCreateCalled = true
             return LookupProgressiveMediaSource(
                 lookupCallback,
@@ -99,7 +103,11 @@ class LookupProgressiveMediaSource private constructor(
         // Do nothing.
     }
 
-    override fun createPeriod(id: MediaSource.MediaPeriodId, allocator: Allocator, startPositionUs: Long): MediaPeriod {
+    override fun createPeriod(
+        id: MediaSource.MediaPeriodId,
+        allocator: Allocator,
+        startPositionUs: Long
+    ): MediaPeriod {
         val dataSource = dataSourceFactory.createDataSource()
         if (transferListener != null) {
             dataSource.addTransferListener(transferListener)

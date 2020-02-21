@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.musichub.R
 import com.musichub.concurrent.Cancellable
 import com.musichub.concurrent.ResponseListener
-import com.musichub.resource.AppleMusicEntity
-import com.musichub.resource.AppleMusicMV
-import com.musichub.resource.AppleMusicSearch
+import com.musichub.scraper.AppleMusicEntity
+import com.musichub.scraper.AppleMusicMV
+import com.musichub.scraper.AppleMusicSearch
 import com.musichub.singleton.Singleton
 
 
@@ -27,7 +27,11 @@ class SearchCatalogFragment : SearchTargetFragment() {
 
     private var query: String = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_search_catalog, container, false)
     }
 
@@ -55,11 +59,15 @@ class SearchCatalogFragment : SearchTargetFragment() {
     }
 
 
-    override fun onQueryTextSubmit(query: String) { loadContent(query) }
+    override fun onQueryTextSubmit(query: String) {
+        loadContent(query)
+    }
 
-    override fun onQueryTextChange(query: String) { }
+    override fun onQueryTextChange(query: String) {}
 
-    override fun onPageChange(query: String) { loadContent(query) }
+    override fun onPageChange(query: String) {
+        loadContent(query)
+    }
 
     private fun loadContent(query: String) {
         this.query = query
@@ -75,33 +83,32 @@ class SearchCatalogFragment : SearchTargetFragment() {
 
         searchCancellable?.cancel()
         searchCancellable = Singleton.appleMusicScraper.searchAll(query, 10,
-            object: ResponseListener<AppleMusicSearch<AppleMusicEntity>> {
-            override fun onResponse(response: AppleMusicSearch<AppleMusicEntity>) {
-                progressBar.visibility = View.INVISIBLE
-                val itemList = response.itemList.filter { it !is AppleMusicMV }
-                if (itemList.isNotEmpty()) {
+            object : ResponseListener<AppleMusicSearch<AppleMusicEntity>> {
+                override fun onResponse(response: AppleMusicSearch<AppleMusicEntity>) {
                     progressBar.visibility = View.INVISIBLE
-                    textViewMsg.visibility = View.INVISIBLE
-                    recyclerView.visibility = View.VISIBLE
-                    recyclerView.adapter = SearchCatalogRecyclerViewAdapter(
-                        context!!, activity as MainActivityAction, itemList, query, true
-                    )
+                    val itemList = response.itemList.filter { it !is AppleMusicMV }
+                    if (itemList.isNotEmpty()) {
+                        progressBar.visibility = View.INVISIBLE
+                        textViewMsg.visibility = View.INVISIBLE
+                        recyclerView.visibility = View.VISIBLE
+                        recyclerView.adapter = SearchCatalogRecyclerViewAdapter(
+                            context!!, activity as MainActivityAction, itemList, query, true
+                        )
+                    } else {
+                        progressBar.visibility = View.INVISIBLE
+                        textViewMsg.visibility = View.VISIBLE
+                        recyclerView.visibility = View.INVISIBLE
+                        textViewMsg.text = resources.getString(R.string.msg_no_matching_result)
+                    }
                 }
-                else {
+
+                override fun onError(error: Exception) {
                     progressBar.visibility = View.INVISIBLE
                     textViewMsg.visibility = View.VISIBLE
                     recyclerView.visibility = View.INVISIBLE
-                    textViewMsg.text = resources.getString(R.string.msg_no_matching_result)
+                    textViewMsg.text = resources.getString(R.string.msg_load_error_press_retry)
                 }
-            }
-
-            override fun onError(error: Exception) {
-                progressBar.visibility = View.INVISIBLE
-                textViewMsg.visibility = View.VISIBLE
-                recyclerView.visibility = View.INVISIBLE
-                textViewMsg.text = resources.getString(R.string.msg_load_error_press_retry)
-            }
-        })
+            })
     }
 
 }

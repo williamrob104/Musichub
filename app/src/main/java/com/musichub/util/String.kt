@@ -18,8 +18,17 @@ internal fun String.codePointsCompat(): IntArray {
 
 internal fun String.splitBtIndex(index: Int): Pair<String, String> {
     return Pair(
-        try { this.substring(0, index) } catch(e: StringIndexOutOfBoundsException) { "" },
-        try { this.substring(index+1) } catch(e: StringIndexOutOfBoundsException) { "" })
+        try {
+            this.substring(0, index)
+        } catch (e: StringIndexOutOfBoundsException) {
+            ""
+        },
+        try {
+            this.substring(index + 1)
+        } catch (e: StringIndexOutOfBoundsException) {
+            ""
+        }
+    )
 }
 
 internal fun String.messageFormat(vararg args: Any): String {
@@ -27,4 +36,12 @@ internal fun String.messageFormat(vararg args: Any): String {
     for (i in args.indices)
         str = str.replace("{$i}", args[i].toString())
     return str
+}
+
+internal fun String.regexSearch(regex: Regex, group: Int = 0): String {
+    val match = regex.find(this)
+    if (match != null) {
+        return match.groups[group]?.value ?: throw IllegalArgumentException("regex group error")
+    } else
+        throw IllegalArgumentException("regex match error")
 }

@@ -10,7 +10,7 @@ import android.webkit.WebViewClient
 import com.musichub.R
 import com.musichub.networking.UrlParse
 import com.musichub.playback.YoutubeVideoMediaHolder
-import com.musichub.resource.YoutubeScraper
+import com.musichub.scraper.YoutubeScraper
 
 
 class SearchYoutubeFragment : SearchTargetFragment(), FragmentActions {
@@ -25,7 +25,11 @@ class SearchYoutubeFragment : SearchTargetFragment(), FragmentActions {
         mainActivityAction = activity as MainActivityAction
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_search_youtube, container, false)
     }
 
@@ -33,7 +37,7 @@ class SearchYoutubeFragment : SearchTargetFragment(), FragmentActions {
         webView = view.findViewById(R.id.fragment_search_youtube_wv)
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
-        webView.webViewClient = object: WebViewClient() {
+        webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 //val tag = "ytm-pivot-bar-renderer"
                 if (url != null) {
@@ -75,16 +79,19 @@ class SearchYoutubeFragment : SearchTargetFragment(), FragmentActions {
         return if (webView.canGoBack()) {
             webView.goBack()
             true
-        }
-        else false
+        } else false
     }
 
 
     /* extends SearchTargetFragment */
 
-    override fun onQueryTextSubmit(query: String) { performSearch(query) }
+    override fun onQueryTextSubmit(query: String) {
+        performSearch(query)
+    }
 
-    override fun onPageChange(query: String) { performSearch(query) }
+    override fun onPageChange(query: String) {
+        performSearch(query)
+    }
 
     override fun onQueryTextChange(query: String) {}
 
@@ -93,8 +100,7 @@ class SearchYoutubeFragment : SearchTargetFragment(), FragmentActions {
             val url = "https://www.youtube.com/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ"
             webViewClearHistory = true
             webView.loadUrl(url)
-        }
-        else {
+        } else {
             val urlTemplate = "https://www.youtube.com/results?search_query=%s"
             val url = urlTemplate.format(UrlParse.encodeAll(query))
             webViewClearHistory = true

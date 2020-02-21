@@ -1,4 +1,4 @@
-package com.musichub.resource
+package com.musichub.scraper
 
 import android.util.Log
 import com.musichub.concurrent.CallbackExecutor
@@ -22,15 +22,19 @@ import kotlin.collections.set
 import kotlin.math.round
 
 
-class AppleMusicScraper(private val basicHttpRequests: BasicHttpRequests,
-                        private val callbackExecutor: CallbackExecutor,
-                        private val locale: Locale) {
+class AppleMusicScraper(
+    private val basicHttpRequests: BasicHttpRequests,
+    private val callbackExecutor: CallbackExecutor,
+    private val locale: Locale
+) {
     private val endpointUrl = "https://itunes.apple.com/search"
 
     private fun <T> RequestFuture<T>.defaultGet(): T = this.get(8, TimeUnit.SECONDS)
 
-    fun searchAll(query: String, limit: Int,
-                  listener: ResponseListener<AppleMusicSearch<AppleMusicEntity>>): Cancellable {
+    fun searchAll(
+        query: String, limit: Int,
+        listener: ResponseListener<AppleMusicSearch<AppleMusicEntity>>
+    ): Cancellable {
         return callbackExecutor.executeCallback(listener) {
             val artistsFuture = RequestFuture<AppleMusicSearch<AppleMusicArtist>>()
             this.searchArtists(query, 5, 0, artistsFuture)
@@ -41,8 +45,10 @@ class AppleMusicScraper(private val basicHttpRequests: BasicHttpRequests,
             val songsFuture = RequestFuture<AppleMusicSearch<AppleMusicSong>>()
             this.searchSongs(query, limit, 0, songsFuture)
 
-            val artists = artistsFuture.defaultGet().itemList.asSequence().map { it.artistId to it }.toMap()
-            val albums = albumsFuture.defaultGet().itemList.asSequence().map { it.albumId to it }.toMap()
+            val artists =
+                artistsFuture.defaultGet().itemList.asSequence().map { it.artistId to it }.toMap()
+            val albums =
+                albumsFuture.defaultGet().itemList.asSequence().map { it.albumId to it }.toMap()
             val songs = songsFuture.defaultGet().itemList
 
             val entitySet = LinkedHashSet<AppleMusicEntity>()
@@ -62,16 +68,19 @@ class AppleMusicScraper(private val basicHttpRequests: BasicHttpRequests,
         }
     }
 
-    fun searchArtists(query: String, limit: Int, offset: Int,
-                      listener: ResponseListener<AppleMusicSearch<AppleMusicArtist>>): Cancellable {
+    fun searchArtists(
+        query: String, limit: Int, offset: Int,
+        listener: ResponseListener<AppleMusicSearch<AppleMusicArtist>>
+    ): Cancellable {
         val params = mapOf(
-                "term" to query,
-                "limit" to limit.toString(),
-                "offset" to offset.toString(),
-                "media" to "music",
-                "entity" to "musicArtist",
-                "country" to locale.country)
-        val url = UrlParse.joinUrl(endpointUrl, params=UrlParse.encodeParams(params))
+            "term" to query,
+            "limit" to limit.toString(),
+            "offset" to offset.toString(),
+            "media" to "music",
+            "entity" to "musicArtist",
+            "country" to locale.country
+        )
+        val url = UrlParse.joinUrl(endpointUrl, params = UrlParse.encodeParams(params))
         return basicHttpRequests.httpGETJson(url, null, listener) {
             val artists = ArrayList<AppleMusicArtist>()
             val artistsJsonArr = it.getJSONArray("results")
@@ -83,16 +92,19 @@ class AppleMusicScraper(private val basicHttpRequests: BasicHttpRequests,
         }
     }
 
-    fun searchAlbums(query: String, limit: Int, offset: Int,
-                     listener: ResponseListener<AppleMusicSearch<AppleMusicAlbum>>): Cancellable {
+    fun searchAlbums(
+        query: String, limit: Int, offset: Int,
+        listener: ResponseListener<AppleMusicSearch<AppleMusicAlbum>>
+    ): Cancellable {
         val params = mapOf(
-                "term" to query,
-                "limit" to limit.toString(),
-                "offset" to offset.toString(),
-                "media" to "music",
-                "entity" to "album",
-                "country" to locale.country)
-        val url = UrlParse.joinUrl(endpointUrl, params=UrlParse.encodeParams(params))
+            "term" to query,
+            "limit" to limit.toString(),
+            "offset" to offset.toString(),
+            "media" to "music",
+            "entity" to "album",
+            "country" to locale.country
+        )
+        val url = UrlParse.joinUrl(endpointUrl, params = UrlParse.encodeParams(params))
         return basicHttpRequests.httpGETJson(url, null, listener) {
             val albums = ArrayList<AppleMusicAlbum>()
             val albumsJsonArr = it.getJSONArray("results")
@@ -104,16 +116,19 @@ class AppleMusicScraper(private val basicHttpRequests: BasicHttpRequests,
         }
     }
 
-    fun searchSongs(query: String, limit: Int, offset: Int,
-                     listener: ResponseListener<AppleMusicSearch<AppleMusicSong>>): Cancellable {
+    fun searchSongs(
+        query: String, limit: Int, offset: Int,
+        listener: ResponseListener<AppleMusicSearch<AppleMusicSong>>
+    ): Cancellable {
         val params = mapOf(
-                "term" to query,
-                "limit" to limit.toString(),
-                "offset" to offset.toString(),
-                "media" to "music",
-                "entity" to "song",
-                "country" to locale.country)
-        val url = UrlParse.joinUrl(endpointUrl, params=UrlParse.encodeParams(params))
+            "term" to query,
+            "limit" to limit.toString(),
+            "offset" to offset.toString(),
+            "media" to "music",
+            "entity" to "song",
+            "country" to locale.country
+        )
+        val url = UrlParse.joinUrl(endpointUrl, params = UrlParse.encodeParams(params))
         return basicHttpRequests.httpGETJson(url, null, listener) {
             val songs = ArrayList<AppleMusicSong>()
             val songsJsonArr = it.getJSONArray("results")
@@ -125,15 +140,18 @@ class AppleMusicScraper(private val basicHttpRequests: BasicHttpRequests,
         }
     }
 
-    fun searchMVs(query: String, limit: Int,
-                  listener: ResponseListener<AppleMusicSearch<AppleMusicMV>>): Cancellable {
+    fun searchMVs(
+        query: String, limit: Int,
+        listener: ResponseListener<AppleMusicSearch<AppleMusicMV>>
+    ): Cancellable {
         val params = mapOf(
-                "term" to query,
-                "limit" to limit.toString(),
-                "media" to "music",
-                "entity" to "musicVideo",
-                "country" to locale.country)
-        val url = UrlParse.joinUrl(endpointUrl, params=UrlParse.encodeParams(params))
+            "term" to query,
+            "limit" to limit.toString(),
+            "media" to "music",
+            "entity" to "musicVideo",
+            "country" to locale.country
+        )
+        val url = UrlParse.joinUrl(endpointUrl, params = UrlParse.encodeParams(params))
         return basicHttpRequests.httpGETJson(url, null, listener) {
             val mvs = ArrayList<AppleMusicMV>()
             val mvsJsonArr = it.getJSONArray("results")
@@ -145,38 +163,46 @@ class AppleMusicScraper(private val basicHttpRequests: BasicHttpRequests,
         }
     }
 
-    fun browseArtist(artistViewUrl: String,
-                     listener: ResponseListener<AppleMusicArtistBrowse>): Cancellable {
+    fun browseArtist(
+        artistViewUrl: String,
+        listener: ResponseListener<AppleMusicArtistBrowse>
+    ): Cancellable {
         return basicHttpRequests.httpGETString(artistViewUrl, null, listener) {
             val regex = """>\s*(\{\s*"data".*?\})\s*<""".toRegex()
-            val jsonStr = regexSearch(regex, it, 1)
+            val jsonStr = it.regexSearch(regex, 1)
             val json = JSONObject(jsonStr)
             AppleMusicExtractor.extractAppleMusicArtistBrowse(json)
         }
     }
 
-    fun browseAlbum(albumViewUrl: String,
-                    listener: ResponseListener<AppleMusicAlbumBrowse>): Cancellable {
+    fun browseAlbum(
+        albumViewUrl: String,
+        listener: ResponseListener<AppleMusicAlbumBrowse>
+    ): Cancellable {
         return basicHttpRequests.httpGETString(albumViewUrl, null, listener) {
             val regex = """>\s*(\{\s*"data".*?\})\s*<""".toRegex()
-            val jsonStr = regexSearch(regex, it, 1)
+            val jsonStr = it.regexSearch(regex, 1)
             val json = JSONObject(jsonStr)
             AppleMusicExtractor.extractAppleMusicAlbumBrowse(json)
         }
     }
 
-    fun browsePlaylist(playlistViewUrl: String,
-                       listener: ResponseListener<AppleMusicPlaylistBrowse>): Cancellable {
+    fun browsePlaylist(
+        playlistViewUrl: String,
+        listener: ResponseListener<AppleMusicPlaylistBrowse>
+    ): Cancellable {
         return basicHttpRequests.httpGETString(playlistViewUrl, null, listener) {
             val regex = """>\s*(\{\s*"data".*?\})\s*<""".toRegex()
-            val jsonStr = regexSearch(regex, it, 1)
+            val jsonStr = it.regexSearch(regex, 1)
             val json = JSONObject(jsonStr)
             AppleMusicExtractor.extractAppleMusicPlaylistBrowse(json)
         }
     }
 
-    fun getSectionSongs(sectionViewAllUrl: String,
-                        listener: ResponseListener<AppleMusicSection<AppleMusicSong3>>): Cancellable {
+    fun getSectionSongs(
+        sectionViewAllUrl: String,
+        listener: ResponseListener<AppleMusicSection<AppleMusicSong3>>
+    ): Cancellable {
         return basicHttpRequests.httpGETJson(sectionViewAllUrl, null, listener) {
             val name = it.getJSONObject("pageData").getString("title")
             val results = it.getJSONObject("storePlatformData").getJSONObject("webexp-lockup")
@@ -192,11 +218,14 @@ class AppleMusicScraper(private val basicHttpRequests: BasicHttpRequests,
         }
     }
 
-    fun getSectionMVs(sectionViewAllUrl: String,
-                      listener: ResponseListener<AppleMusicSection<AppleMusicMV3>>): Cancellable {
+    fun getSectionMVs(
+        sectionViewAllUrl: String,
+        listener: ResponseListener<AppleMusicSection<AppleMusicMV3>>
+    ): Cancellable {
         return basicHttpRequests.httpGETJson(sectionViewAllUrl, null, listener) {
             val name = it.getJSONObject("pageData").getString("title")
-            val results = it.getJSONObject("storePlatformData").getJSONObject("webexp-lockup").getJSONObject("results")
+            val results = it.getJSONObject("storePlatformData").getJSONObject("webexp-lockup")
+                .getJSONObject("results")
             val mvList = ArrayList<AppleMusicMV3>()
             for (key in results.keys()) {
                 val mvJson = results.getJSONObject(key)
@@ -208,11 +237,14 @@ class AppleMusicScraper(private val basicHttpRequests: BasicHttpRequests,
         }
     }
 
-    fun getSectionAlbums(sectionViewAllUrl: String,
-                         listener: ResponseListener<AppleMusicSection<AppleMusicAlbum3>>): Cancellable {
+    fun getSectionAlbums(
+        sectionViewAllUrl: String,
+        listener: ResponseListener<AppleMusicSection<AppleMusicAlbum3>>
+    ): Cancellable {
         return basicHttpRequests.httpGETJson(sectionViewAllUrl, null, listener) {
             val name = it.getJSONObject("pageData").getString("title")
-            val results = it.getJSONObject("storePlatformData").getJSONObject("webexp-lockup").getJSONObject("results")
+            val results = it.getJSONObject("storePlatformData").getJSONObject("webexp-lockup")
+                .getJSONObject("results")
             val albumList = ArrayList<AppleMusicAlbum3>()
             for (key in results.keys()) {
                 val songJson = results.getJSONObject(key)
@@ -224,11 +256,14 @@ class AppleMusicScraper(private val basicHttpRequests: BasicHttpRequests,
         }
     }
 
-    fun getSectionPlaylists(sectionViewAllUrl: String,
-                            listener: ResponseListener<AppleMusicSection<AppleMusicPlaylist3>>): Cancellable {
+    fun getSectionPlaylists(
+        sectionViewAllUrl: String,
+        listener: ResponseListener<AppleMusicSection<AppleMusicPlaylist3>>
+    ): Cancellable {
         return basicHttpRequests.httpGETJson(sectionViewAllUrl, null, listener) {
             val name = it.getJSONObject("pageData").getString("title")
-            val results = it.getJSONObject("storePlatformData").getJSONObject("webexp-lockup").getJSONObject("results")
+            val results = it.getJSONObject("storePlatformData").getJSONObject("webexp-lockup")
+                .getJSONObject("results")
             val playlistList = ArrayList<AppleMusicPlaylist3>()
             for (key in results.keys()) {
                 val songJson = results.getJSONObject(key)
@@ -242,7 +277,7 @@ class AppleMusicScraper(private val basicHttpRequests: BasicHttpRequests,
 }
 
 
-interface AppleMusicTrack: Track {
+interface AppleMusicTrack : Track {
     override val title: String
     val id: Long
     override val length: Int
@@ -256,11 +291,11 @@ interface AppleMusicTrack: Track {
 sealed class AppleMusicEntity
 
 class AppleMusicArtist(
-        val name: String,
-        val artistViewUrl: String?,
-        val artistId: Long,
-        val primaryGenre: String?
-): AppleMusicEntity() {
+    val name: String,
+    val artistViewUrl: String?,
+    val artistId: Long,
+    val primaryGenre: String?
+) : AppleMusicEntity() {
     override fun equals(other: Any?): Boolean {
         return other is AppleMusicArtist && artistId == other.artistId
     }
@@ -271,18 +306,18 @@ class AppleMusicArtist(
 }
 
 class AppleMusicAlbum(
-        val title: String,
-        val albumId: Long,
-        val albumViewUrl: String,
-        val coverart: Image?,
-        val trackCount: Int,
-        val releaseDate: Date,
-        val explicit: Boolean,
-        val primaryGenre: String?,
-        val artistName: String,
-        val artistId: Long,
-        val artistViewUrl: String?
-): AppleMusicEntity() {
+    val title: String,
+    val albumId: Long,
+    val albumViewUrl: String,
+    val coverart: Image?,
+    val trackCount: Int,
+    val releaseDate: Date,
+    val explicit: Boolean,
+    val primaryGenre: String?,
+    val artistName: String,
+    val artistId: Long,
+    val artistViewUrl: String?
+) : AppleMusicEntity() {
     override fun equals(other: Any?): Boolean {
         return other is AppleMusicAlbum && albumId == other.albumId
     }
@@ -293,23 +328,23 @@ class AppleMusicAlbum(
 }
 
 class AppleMusicSong(
-        override val title: String,
-        val songId: Long,
-        val songNumber: Int,
-        override val length: Int,
-        val releaseDate: Date,
-        val explicit: Boolean,
-        val primaryGenre: String?,
-        override val artistName: String,
-        override val artistId: Long,
-        override val artistViewUrl: String?,
-        override val albumTitle: String,
-        val albumId: Long,
-        val albumViewUrl: String,
-        override val coverart: Image?,
-        val albumTrackCount: Int,
-        val albumExplicit: Boolean
-): AppleMusicEntity(), AppleMusicTrack {
+    override val title: String,
+    val songId: Long,
+    val songNumber: Int,
+    override val length: Int,
+    val releaseDate: Date,
+    val explicit: Boolean,
+    val primaryGenre: String?,
+    override val artistName: String,
+    override val artistId: Long,
+    override val artistViewUrl: String?,
+    override val albumTitle: String,
+    val albumId: Long,
+    val albumViewUrl: String,
+    override val coverart: Image?,
+    val albumTrackCount: Int,
+    val albumExplicit: Boolean
+) : AppleMusicEntity(), AppleMusicTrack {
     override fun equals(other: Any?): Boolean {
         return other is AppleMusicSong && songId == other.songId
     }
@@ -322,16 +357,16 @@ class AppleMusicSong(
 }
 
 class AppleMusicMV(
-        override val title: String,
-        val mvId: Long,
-        override val length: Int,
-        val releaseDate: Date,
-        val explicit: Boolean,
-        override val coverart: Image?,
-        override val artistName: String,
-        override val artistId: Long,
-        override val artistViewUrl: String?
-): AppleMusicEntity(), AppleMusicTrack {
+    override val title: String,
+    val mvId: Long,
+    override val length: Int,
+    val releaseDate: Date,
+    val explicit: Boolean,
+    override val coverart: Image?,
+    override val artistName: String,
+    override val artistId: Long,
+    override val artistViewUrl: String?
+) : AppleMusicEntity(), AppleMusicTrack {
     override fun equals(other: Any?): Boolean {
         return other is AppleMusicMV && mvId == other.mvId
     }
@@ -345,67 +380,67 @@ class AppleMusicMV(
 }
 
 class AppleMusicSearch<T>(
-        val itemList: List<T>,
-        val echoQuery: String,
-        val echoLimit: Int
+    val itemList: List<T>,
+    val echoQuery: String,
+    val echoLimit: Int
 )
 
 class AppleMusicArtistBrowse(
-        val name: String,
-        val artistViewUrl: String,
-        val artistId: Long,
-        val bio: String?,
-        val bornOrFormedDate: Date?,
-        val origin: String?,
-        val avatar: Image?,
-        val primaryGenre: String?,
-        val sectionTopSongs: AppleMusicSection<AppleMusicSong2>?,
-        val sectionLatestRelease: AppleMusicSection<AppleMusicAlbum2>?,
-        val sectionFeaturedAlbums: AppleMusicSection<AppleMusicAlbum2>?,
-        val sectionFullAlbums: AppleMusicSection<AppleMusicAlbum2>?,
-        val sectionRecentVideos: AppleMusicSection<AppleMusicMV2>?,
-        val sectionPlaylists: AppleMusicSection<AppleMusicPlaylist2>?,
-        val sectionSingleAlbums: AppleMusicSection<AppleMusicAlbum2>?,
-        val sectionLiveAlbums: AppleMusicSection<AppleMusicAlbum2>?,
-        val sectionCompilationAlbums: AppleMusicSection<AppleMusicAlbum2>?,
-        val sectionAppearsOnAlbums: AppleMusicSection<AppleMusicAlbum2>?
+    val name: String,
+    val artistViewUrl: String,
+    val artistId: Long,
+    val bio: String?,
+    val bornOrFormedDate: Date?,
+    val origin: String?,
+    val avatar: Image?,
+    val primaryGenre: String?,
+    val sectionTopSongs: AppleMusicSection<AppleMusicSong2>?,
+    val sectionLatestRelease: AppleMusicSection<AppleMusicAlbum2>?,
+    val sectionFeaturedAlbums: AppleMusicSection<AppleMusicAlbum2>?,
+    val sectionFullAlbums: AppleMusicSection<AppleMusicAlbum2>?,
+    val sectionRecentVideos: AppleMusicSection<AppleMusicMV2>?,
+    val sectionPlaylists: AppleMusicSection<AppleMusicPlaylist2>?,
+    val sectionSingleAlbums: AppleMusicSection<AppleMusicAlbum2>?,
+    val sectionLiveAlbums: AppleMusicSection<AppleMusicAlbum2>?,
+    val sectionCompilationAlbums: AppleMusicSection<AppleMusicAlbum2>?,
+    val sectionAppearsOnAlbums: AppleMusicSection<AppleMusicAlbum2>?
 )
 
 class AppleMusicPlaylistBrowse(
-        val title: String,
-        val playlistId: String,
-        val playlistViewUrl: String,
-        val trackCount: Int,
-        val lastModifiedDate: Date,
-        val descriptionStandard: String?,
-        val descriptionShort: String?,
-        val coverart: Image?,
-        val trackList: List<AppleMusicPlaylistItem2>
+    val title: String,
+    val playlistId: String,
+    val playlistViewUrl: String,
+    val trackCount: Int,
+    val lastModifiedDate: Date,
+    val descriptionStandard: String?,
+    val descriptionShort: String?,
+    val coverart: Image?,
+    val trackList: List<AppleMusicPlaylistItem2>
 )
 
 class AppleMusicAlbumBrowse(
-        val title: String,
-        val albumId: Long,
-        val albumViewUrl: String,
-        val artistName: String,
-        val artistViewUrl: String,
-        val songCount: Int,
-        val releaseDate: Date,
-        val noteStandard: String?,
-        val noteShort: String?,
-        val coverart: Image?,
-        val songList: List<AppleMusicSong2>
+    val title: String,
+    val albumId: Long,
+    val albumViewUrl: String,
+    val artistName: String,
+    val artistViewUrl: String,
+    val songCount: Int,
+    val releaseDate: Date,
+    val noteStandard: String?,
+    val noteShort: String?,
+    val coverart: Image?,
+    val songList: List<AppleMusicSong2>
 )
 
 class AppleMusicImage(
-        private val templateUrl: String,
-        private val maxWidth: Int=2000,
-        private val maxHeight: Int=2000
-): Image {
+    private val templateUrl: String,
+    private val maxWidth: Int = 2000,
+    private val maxHeight: Int = 2000
+) : Image {
     private fun makeSource(width: Int, height: Int): Image.Source {
         val url = templateUrl
-                .replace("{w}", width.toString())
-                .replace("{h}", height.toString())
+            .replace("{w}", width.toString())
+            .replace("{h}", height.toString())
         return Image.Source(url, width, height)
     }
 
@@ -450,11 +485,11 @@ private interface PostProcess {
     fun connect(resources: Map<String, Any>)
 }
 
-class AppleMusicSection<T: Any>(
-        val name: String,
-        internal val sectionViewAllUrl: String,
-        _entityIds: List<String>
-): PostProcess {
+class AppleMusicSection<T : Any>(
+    val name: String,
+    internal val sectionViewAllUrl: String,
+    _entityIds: List<String>
+) : PostProcess {
     private var entityIds: List<String>? = _entityIds
     lateinit var entityList: List<T>
         internal set
@@ -462,28 +497,28 @@ class AppleMusicSection<T: Any>(
     override fun connect(resources: Map<String, Any>) {
         @Suppress("UNCHECKED_CAST")
         entityList = entityIds?.asSequence()
-                ?.filter { it in resources }
-                ?.map { resources[it] as T }?.toList() ?: throw RuntimeException("entityIds is null")
+            ?.filter { it in resources }
+            ?.map { resources[it] as T }?.toList() ?: throw RuntimeException("entityIds is null")
         entityIds = null
     }
 }
 
 class AppleMusicAlbum2(
-        val title: String,
-        val albumId: Long,
-        val albumViewUrl: String,
-        val artistName: String,
-        val trackCount: Int,
-        val releaseDate: Date,
-        _coverartId: String?
-): PostProcess {
+    val title: String,
+    val albumId: Long,
+    val albumViewUrl: String,
+    val artistName: String,
+    val trackCount: Int,
+    val releaseDate: Date,
+    _coverartId: String?
+) : PostProcess {
     private var coverartId = _coverartId
     var coverart: Image? = null
         private set
 
     override fun connect(resources: Map<String, Any>) {
         coverart = if (coverartId == null) null
-                   else resources[coverartId!!] as Image
+        else resources[coverartId!!] as Image
         coverartId = null
     }
 
@@ -497,15 +532,15 @@ class AppleMusicAlbum2(
 }
 
 class AppleMusicSong2(
-        override val title: String,
-        val songId: Long,
-        override val artistName: String,
-        override val artistId: Long,
-        override val artistViewUrl: String?,
-        override val albumTitle: String,
-        _coverartId: String?,
-        _offerIds: List<String>
-): PostProcess, AppleMusicTrack {
+    override val title: String,
+    val songId: Long,
+    override val artistName: String,
+    override val artistId: Long,
+    override val artistViewUrl: String?,
+    override val albumTitle: String,
+    _coverartId: String?,
+    _offerIds: List<String>
+) : PostProcess, AppleMusicTrack {
     private var _coverartId: String? = _coverartId
     private var _coverart: Image? = null
     override val coverart
@@ -520,7 +555,7 @@ class AppleMusicSong2(
 
     override fun connect(resources: Map<String, Any>) {
         _coverart = if (_coverartId == null) null
-                   else resources[_coverartId!!] as Image
+        else resources[_coverartId!!] as Image
         _coverartId = null
 
         for (offerId in _offerIds!!) {
@@ -543,14 +578,14 @@ class AppleMusicSong2(
 }
 
 class AppleMusicMV2(
-        override val title: String,
-        val mvId: Long,
-        override val artistName: String,
-        override val artistId: Long,
-        override val artistViewUrl: String?,
-        _coverartId: String?,
-        _offerIds: List<String>
-): PostProcess, AppleMusicTrack {
+    override val title: String,
+    val mvId: Long,
+    override val artistName: String,
+    override val artistId: Long,
+    override val artistViewUrl: String?,
+    _coverartId: String?,
+    _offerIds: List<String>
+) : PostProcess, AppleMusicTrack {
     private var _coverartId: String? = _coverartId
     private var _coverart: Image? = null
     override val coverart
@@ -589,32 +624,32 @@ class AppleMusicMV2(
 }
 
 class AppleMusicPlaylist2(
-        val title: String,
-        val playlistViewUrl: String,
-        val lastModifiedDate: Date,
-        _coverartId: String?
-): PostProcess {
+    val title: String,
+    val playlistViewUrl: String,
+    val lastModifiedDate: Date,
+    _coverartId: String?
+) : PostProcess {
     private var coverartId = _coverartId
     var coverart: Image? = null
         private set
 
     override fun connect(resources: Map<String, Any>) {
         coverart = if (coverartId == null) null
-                   else resources[coverartId!!] as Image
+        else resources[coverartId!!] as Image
         coverartId = null
     }
 }
 
 class AppleMusicPlaylistItem2(
-        override val title: String,
-        val trackId: Long,
-        override val artistName: String,
-        override val artistId: Long,
-        override val artistViewUrl: String,
-        val isMusicVideo: Boolean,
-        _coverartId: String?,
-        _offerIds: List<String>
-): PostProcess, AppleMusicTrack {
+    override val title: String,
+    val trackId: Long,
+    override val artistName: String,
+    override val artistId: Long,
+    override val artistViewUrl: String,
+    val isMusicVideo: Boolean,
+    _coverartId: String?,
+    _offerIds: List<String>
+) : PostProcess, AppleMusicTrack {
     private var _coverartId: String? = _coverartId
     private var _coverart: Image? = null
     override val coverart
@@ -646,18 +681,18 @@ class AppleMusicPlaylistItem2(
 
 
 class AppleMusicSong3(
-        override val title: String,
-        val songId: Long,
-        override val artistName: String,
-        override val artistId: Long,
-        override val artistViewUrl: String,
-        override val albumTitle: String,
-        val releaseDate: Date,
-        override val coverart: Image?,
-        override val length: Int,
-        val songNumber: Int,
-        val popularity: Double
-): AppleMusicTrack {
+    override val title: String,
+    val songId: Long,
+    override val artistName: String,
+    override val artistId: Long,
+    override val artistViewUrl: String,
+    override val albumTitle: String,
+    val releaseDate: Date,
+    override val coverart: Image?,
+    override val length: Int,
+    val songNumber: Int,
+    val popularity: Double
+) : AppleMusicTrack {
     override val id = songId
 
     override fun equals(other: Any?): Boolean {
@@ -670,16 +705,16 @@ class AppleMusicSong3(
 }
 
 class AppleMusicMV3(
-        override val title: String,
-        val mvId: Long,
-        override val artistName: String,
-        override val artistId: Long,
-        override val artistViewUrl: String,
-        val releaseDate: Date,
-        override val coverart: Image?,
-        override val length: Int,
-        val popularity: Double
-): AppleMusicTrack {
+    override val title: String,
+    val mvId: Long,
+    override val artistName: String,
+    override val artistId: Long,
+    override val artistViewUrl: String,
+    val releaseDate: Date,
+    override val coverart: Image?,
+    override val length: Int,
+    val popularity: Double
+) : AppleMusicTrack {
     override val id = mvId
     override val albumTitle: String? = null
 
@@ -693,16 +728,16 @@ class AppleMusicMV3(
 }
 
 class AppleMusicAlbum3(
-        val title: String,
-        val albumId: Long,
-        val albumViewUrl: String,
-        val artistName: String,
-        val artistId: Long,
-        val artistViewUrl: String,
-        val trackCount: Int,
-        val releaseDate: Date,
-        val coverart: Image?,
-        val popularity: Double
+    val title: String,
+    val albumId: Long,
+    val albumViewUrl: String,
+    val artistName: String,
+    val artistId: Long,
+    val artistViewUrl: String,
+    val trackCount: Int,
+    val releaseDate: Date,
+    val coverart: Image?,
+    val popularity: Double
 ) {
     override fun equals(other: Any?): Boolean {
         return other is AppleMusicAlbum3 && albumId == other.albumId
@@ -714,12 +749,12 @@ class AppleMusicAlbum3(
 }
 
 class AppleMusicPlaylist3(
-        val title: String,
-        val playlistId: String,
-        val playlistViewUrl: String,
-        val lastModifiedDate: Date,
-        val descriptionStandard: String?,
-        val descriptionShort: String?
+    val title: String,
+    val playlistId: String,
+    val playlistViewUrl: String,
+    val lastModifiedDate: Date,
+    val descriptionStandard: String?,
+    val descriptionShort: String?
 )
 
 
@@ -841,16 +876,16 @@ private object AppleMusicExtractor {
             if (avatarId == null) null else (resources[avatarId] as Image),
             if (genreId == null) null else (resources[genreId] as String),
 
-            resources[sectionIds["topSongs"]]          as AppleMusicSection<AppleMusicSong2>?,
-            resources[sectionIds["latestRelease"]]     as AppleMusicSection<AppleMusicAlbum2>?,
-            resources[sectionIds["featuredAlbums"]]    as AppleMusicSection<AppleMusicAlbum2>?,
-            resources[sectionIds["fullAlbums"]]        as AppleMusicSection<AppleMusicAlbum2>?,
-            resources[sectionIds["recentVideos"]]      as AppleMusicSection<AppleMusicMV2>?,
-            resources[sectionIds["playlists"]]         as AppleMusicSection<AppleMusicPlaylist2>?,
-            resources[sectionIds["singleAlbums"]]      as AppleMusicSection<AppleMusicAlbum2>?,
-            resources[sectionIds["liveAlbums"]]        as AppleMusicSection<AppleMusicAlbum2>?,
+            resources[sectionIds["topSongs"]] as AppleMusicSection<AppleMusicSong2>?,
+            resources[sectionIds["latestRelease"]] as AppleMusicSection<AppleMusicAlbum2>?,
+            resources[sectionIds["featuredAlbums"]] as AppleMusicSection<AppleMusicAlbum2>?,
+            resources[sectionIds["fullAlbums"]] as AppleMusicSection<AppleMusicAlbum2>?,
+            resources[sectionIds["recentVideos"]] as AppleMusicSection<AppleMusicMV2>?,
+            resources[sectionIds["playlists"]] as AppleMusicSection<AppleMusicPlaylist2>?,
+            resources[sectionIds["singleAlbums"]] as AppleMusicSection<AppleMusicAlbum2>?,
+            resources[sectionIds["liveAlbums"]] as AppleMusicSection<AppleMusicAlbum2>?,
             resources[sectionIds["compilationAlbums"]] as AppleMusicSection<AppleMusicAlbum2>?,
-            resources[sectionIds["appearsOnAlbums"]]   as AppleMusicSection<AppleMusicAlbum2>?
+            resources[sectionIds["appearsOnAlbums"]] as AppleMusicSection<AppleMusicAlbum2>?
 
         )
     }
@@ -891,7 +926,8 @@ private object AppleMusicExtractor {
 
         val albumTitle = attr.getString("name")
         val artistViewUrl = attr.getString("artistUrl")
-        val resources = extractAppleMusicResourceMap(json.getJSONArray("included"), artistViewUrl, albumTitle)
+        val resources =
+            extractAppleMusicResourceMap(json.getJSONArray("included"), artistViewUrl, albumTitle)
 
         val songsJsonArr = data.getJSONObject("relationships")
             .getJSONObject("songs").getJSONArray("data")
@@ -920,7 +956,11 @@ private object AppleMusicExtractor {
         )
     }
 
-    private fun extractResource(json: JSONObject, defaultArtistViewUrl: String, defaultAlbumTitle: String?): Any? {
+    private fun extractResource(
+        json: JSONObject,
+        defaultArtistViewUrl: String,
+        defaultAlbumTitle: String?
+    ): Any? {
         try {
             return when (json.getString("type")) {
                 "image" -> extractAppleMusicImage(json)
@@ -935,14 +975,17 @@ private object AppleMusicExtractor {
                 "product/playlist/song" -> extractAppleMusicPlaylistItem2(json)
                 else -> null
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Log.i("MusicBox", json.toString(4))
             throw e
         }
     }
 
-    private fun extractAppleMusicResourceMap(jsonArr: JSONArray, defaultArtistViewUrl: String, defaultAlbumTitle: String?=null): Map<String, Any> {
+    private fun extractAppleMusicResourceMap(
+        jsonArr: JSONArray,
+        defaultArtistViewUrl: String,
+        defaultAlbumTitle: String? = null
+    ): Map<String, Any> {
         val resources = HashMap<String, Any>()
         for (i in 0 until jsonArr.length()) {
             val resourceJson = jsonArr.getJSONObject(i)
@@ -963,24 +1006,25 @@ private object AppleMusicExtractor {
         val name = attr.getString("name")
         val url = attr.getString("seeAllUrl")
 
-        val dataJsonArr = json.getJSONObject("relationships").getJSONObject("content").getJSONArray("data")
+        val dataJsonArr =
+            json.getJSONObject("relationships").getJSONObject("content").getJSONArray("data")
         val entityIds = ArrayList<String>()
         for (i in 0 until dataJsonArr.length()) {
             val dataJson = dataJsonArr.getJSONObject(i)
             entityIds.add(dataJson.getString("id"))
         }
 
-        return when(attr.getString("type")) {
-            "topSongs"          -> AppleMusicSection<AppleMusicSong2>    (name, url, entityIds)
-            "latestRelease"     -> AppleMusicSection<AppleMusicAlbum2>   (name, url, entityIds)
-            "featuredAlbums"    -> AppleMusicSection<AppleMusicAlbum2>   (name, url, entityIds)
-            "fullAlbums"        -> AppleMusicSection<AppleMusicAlbum2>   (name, url, entityIds)
-            "recentVideos"      -> AppleMusicSection<AppleMusicMV2>      (name, url, entityIds)
-            "playlists"         -> AppleMusicSection<AppleMusicPlaylist2>(name, url, entityIds)
-            "singleAlbums"      -> AppleMusicSection<AppleMusicAlbum2>   (name, url, entityIds)
-            "liveAlbums"        -> AppleMusicSection<AppleMusicAlbum2>   (name, url, entityIds)
-            "compilationAlbums" -> AppleMusicSection<AppleMusicAlbum2>   (name, url, entityIds)
-            "appearsOnAlbums"   -> AppleMusicSection<AppleMusicAlbum2>   (name, url, entityIds)
+        return when (attr.getString("type")) {
+            "topSongs" -> AppleMusicSection<AppleMusicSong2>(name, url, entityIds)
+            "latestRelease" -> AppleMusicSection<AppleMusicAlbum2>(name, url, entityIds)
+            "featuredAlbums" -> AppleMusicSection<AppleMusicAlbum2>(name, url, entityIds)
+            "fullAlbums" -> AppleMusicSection<AppleMusicAlbum2>(name, url, entityIds)
+            "recentVideos" -> AppleMusicSection<AppleMusicMV2>(name, url, entityIds)
+            "playlists" -> AppleMusicSection<AppleMusicPlaylist2>(name, url, entityIds)
+            "singleAlbums" -> AppleMusicSection<AppleMusicAlbum2>(name, url, entityIds)
+            "liveAlbums" -> AppleMusicSection<AppleMusicAlbum2>(name, url, entityIds)
+            "compilationAlbums" -> AppleMusicSection<AppleMusicAlbum2>(name, url, entityIds)
+            "appearsOnAlbums" -> AppleMusicSection<AppleMusicAlbum2>(name, url, entityIds)
             else -> null
         }
     }
@@ -1010,13 +1054,16 @@ private object AppleMusicExtractor {
         )
     }
 
-    private fun extractAppleMusicSong2(json: JSONObject, defaultAlbumTitle: String?): AppleMusicSong2 {
+    private fun extractAppleMusicSong2(
+        json: JSONObject,
+        defaultAlbumTitle: String?
+    ): AppleMusicSong2 {
         val attr = json.getJSONObject("attributes")
         val rela = json.getJSONObject("relationships")
 
         val artistViewUrl = attr.getString("artistUrl")
         val artistId = if (attr.isNull("artistId")) parseId(attr.getString("artistUrl"))
-                       else attr.optLong("artistId")
+        else attr.optLong("artistId")
 
         val dataJsonArr = rela.getJSONObject("offers").getJSONArray("data")
         val offerIds = ArrayList<String>()
@@ -1192,8 +1239,9 @@ private object AppleMusicExtractor {
         val (dir, file) = imageUrl.splitBtIndex(imageUrl.lastIndexOf(slash))
         var first = true
         val fileTemplate = """\d+""".toRegex().replace(file) {
-            if (first) { first = false; "{w}"}
-            else "{h}"
+            if (first) {
+                first = false; "{w}"
+            } else "{h}"
         }
         val urlTemplate = "$dir$slash$fileTemplate"
         return AppleMusicImage(urlTemplate)
@@ -1205,7 +1253,7 @@ private object AppleMusicExtractor {
         val index = _dateStr.indexOf('T')
         val dateStr = if (index == -1) _dateStr
         else _dateStr.substring(0, index)
-        val tokens = dateStr.split('-', limit=3)
+        val tokens = dateStr.split('-', limit = 3)
         return Date(
             tokens[0].toInt(),
             if (tokens.size >= 2) tokens[1].toInt() else null,
@@ -1219,8 +1267,7 @@ private object AppleMusicExtractor {
             val baseUrl = if (paramsIdx == -1) url
             else url.substring(0, paramsIdx)
             return baseUrl.substring(baseUrl.lastIndexOf('/') + 1).toLong()
-        }
-        else {
+        } else {
             val start = url.indexOf("ids=") + 4
             val idx = url.indexOf('?', start)
             val end = if (idx == -1) url.length else idx

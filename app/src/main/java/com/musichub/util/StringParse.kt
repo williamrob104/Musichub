@@ -2,7 +2,7 @@ package com.musichub.util
 
 import android.content.res.Resources
 import com.musichub.R
-import com.musichub.resource.Date
+import com.musichub.scraper.Date
 
 
 internal fun parseTime(timeStr: String): Int {
@@ -18,18 +18,17 @@ internal fun parseTime(timeStr: String): Int {
 internal fun formatTime(timeSeconds: Int): String {
     var rem = timeSeconds
     val h = rem / 3600; rem %= 3600
-    val m = rem / 60;   rem %= 60
+    val m = rem / 60; rem %= 60
     val s = rem
     return if (h != 0) {
-        "%d:%02d:%02d".format(h,m,s)
-    }
-    else {
-        "%d:%02d".format(m,s)
+        "%d:%02d:%02d".format(h, m, s)
+    } else {
+        "%d:%02d".format(m, s)
     }
 }
 
 internal fun formatDate(resources: Resources, date: Date): String {
-    val monthStrId = when(date.month) {
+    val monthStrId = when (date.month) {
         1 -> R.string.label_date_jan
         2 -> R.string.label_date_feb
         3 -> R.string.label_date_mar

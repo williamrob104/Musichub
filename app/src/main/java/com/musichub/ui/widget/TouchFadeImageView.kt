@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import com.musichub.R
 
 
-class TouchFadeImageView: AppCompatImageView {
+class TouchFadeImageView : AppCompatImageView {
 
     private var sizeFactor = 1.0f
     private var alphaFactor = 1.0f
@@ -21,26 +21,30 @@ class TouchFadeImageView: AppCompatImageView {
     private var released = true
 
 
-    constructor(context: Context): super(context)
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet?): super(context, attrs)  {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         extractAttrs(attrs, 0, 0)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int):
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
             super(context, attrs, defStyleAttr) {
         extractAttrs(attrs, defStyleAttr, 0)
     }
 
     private fun extractAttrs(attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) {
-        val a = context.theme.obtainStyledAttributes(attrs, R.styleable.TouchFadeView, defStyleAttr, defStyleRes)
+        val a = context.theme.obtainStyledAttributes(
+            attrs,
+            R.styleable.TouchFadeView,
+            defStyleAttr,
+            defStyleRes
+        )
         try {
             sizeFactor = a.getFloat(R.styleable.TouchFadeView_fade_size_factor, sizeFactor)
             alphaFactor = a.getFloat(R.styleable.TouchFadeView_fade_alpha_factor, sizeFactor)
             duration = a.getString(R.styleable.TouchFadeView_fade_duration)?.toLong() ?: duration
             delay = a.getString(R.styleable.TouchFadeView_fade_delay)?.toLong() ?: delay
-        }
-        finally {
+        } finally {
             a.recycle()
         }
     }
@@ -55,8 +59,7 @@ class TouchFadeImageView: AppCompatImageView {
             this.scaleX = sizeFactor
             this.scaleY = sizeFactor
             this.alpha = alphaFactor
-        }
-        else {
+        } else {
             this.scaleX = 1.0f
             this.scaleY = 1.0f
             this.alpha = 1.0f
@@ -78,7 +81,7 @@ class TouchFadeImageView: AppCompatImageView {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (!touchable)
             return false
-            
+
         when (event?.action) {
             MotionEvent.ACTION_DOWN -> {
                 rect.set(left, top, right, bottom)
@@ -108,7 +111,11 @@ class TouchFadeImageView: AppCompatImageView {
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                if (!released && !rect.contains((left + event.x).toInt(), (top + event.y).toInt())) {
+                if (!released && !rect.contains(
+                        (left + event.x).toInt(),
+                        (top + event.y).toInt()
+                    )
+                ) {
                     released = true
                     this.animateRelease()
                     return true

@@ -15,23 +15,26 @@ class ImageRequests(private val requestQueue: RequestQueue, context: Context, ca
 
     private val handler = Handler(context.mainLooper)
 
-    private val cache = object: LruCache<String, Bitmap>(cacheSizeBytes) {
+    private val cache = object : LruCache<String, Bitmap>(cacheSizeBytes) {
         override fun sizeOf(key: String, value: Bitmap): Int {
             return value.rowBytes * value.height
         }
     }
 
-    fun getImage(url: String,
-                 listener: ResponseListener<Bitmap>): Cancellable {
+    fun getImage(
+        url: String,
+        listener: ResponseListener<Bitmap>
+    ): Cancellable {
         val cachedBitmap = cache[url]
         if (cachedBitmap != null) {
             handler.post { listener.onResponse(cachedBitmap) }
-            return object: Cancellable {
+            return object : Cancellable {
                 override fun cancel() {}
-                override fun isCancelled(): Boolean { return false }
+                override fun isCancelled(): Boolean {
+                    return false
+                }
             }
-        }
-        else {
+        } else {
             val request = ImageRequest(
                 url,
                 Response.Listener<Bitmap> { cache.put(url, it); listener.onResponse(it) },
@@ -41,7 +44,7 @@ class ImageRequests(private val requestQueue: RequestQueue, context: Context, ca
                 setShouldRetryServerErrors(true)
                 requestQueue.add(this)
             }
-            return object: Cancellable {
+            return object : Cancellable {
                 override fun cancel() = request.cancel()
                 override fun isCancelled() = request.isCanceled
             }

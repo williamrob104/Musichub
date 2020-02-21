@@ -19,18 +19,18 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.musichub.R
 import com.musichub.concurrent.Cancellable
 import com.musichub.concurrent.ResponseListener
 import com.musichub.playback.AppleMusicTrackMediaHolder
-import com.musichub.resource.AppleMusicAlbum2
-import com.musichub.resource.AppleMusicArtistBrowse
+import com.musichub.scraper.AppleMusicAlbum2
+import com.musichub.scraper.AppleMusicArtistBrowse
 import com.musichub.singleton.Singleton
 import com.musichub.ui.widget.RoundedTouchFadeTextView
 import com.musichub.util.SpecialCharacters
 import com.musichub.util.messageFormat
 import com.musichub.util.setColor
-import com.google.android.material.appbar.CollapsingToolbarLayout
 
 
 class CatalogArtistFragment : Fragment() {
@@ -71,7 +71,11 @@ class CatalogArtistFragment : Fragment() {
         mainActivityAction = activity as MainActivityAction
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_catalog_artist, container, false)
     }
 
@@ -109,7 +113,7 @@ class CatalogArtistFragment : Fragment() {
 
         requestCancellable = Singleton.appleMusicScraper.browseArtist(
             artistViewUrl,
-            object: ResponseListener<AppleMusicArtistBrowse> {
+            object : ResponseListener<AppleMusicArtistBrowse> {
                 override fun onResponse(response: AppleMusicArtistBrowse) {
                     progressBar.visibility = View.INVISIBLE
                     setContent(response)
@@ -127,7 +131,7 @@ class CatalogArtistFragment : Fragment() {
     private fun setContent(artist: AppleMusicArtistBrowse) {
         val imageUrl = artist.avatar?.sourceByShortSideEquals(640)?.url
         if (imageUrl != null)
-            Singleton.imageRequests.getImage(imageUrl, object: ResponseListener<Bitmap> {
+            Singleton.imageRequests.getImage(imageUrl, object : ResponseListener<Bitmap> {
                 override fun onResponse(response: Bitmap) {
                     imageViewAvatar.setImageBitmap(response)
                 }
@@ -148,17 +152,24 @@ class CatalogArtistFragment : Fragment() {
         val colorPrimary = ContextCompat.getColor(context!!, R.color.contentColorPrimary)
         val colorSecondary = ContextCompat.getColor(context!!, R.color.contentColorSecondary)
 
-        val postfix = SpannableString(resources.getString(R.string.label_term_andmore)).setColor(colorPrimary)
+        val postfix =
+            SpannableString(resources.getString(R.string.label_term_andmore)).setColor(colorPrimary)
         val text = SpannableStringBuilder(postfix)
 
         var i = 0
         for (song in songs) {
             i += 1
             text
-                .insert(text.length - postfix.length,
-                    SpannableString(song.artistName).setColor(colorPrimary))
-                .insert(text.length - postfix.length,
-                    SpannableString(" ${song.title} ${SpecialCharacters.smblkcircle} ").setColor(colorSecondary))
+                .insert(
+                    text.length - postfix.length,
+                    SpannableString(song.artistName).setColor(colorPrimary)
+                )
+                .insert(
+                    text.length - postfix.length,
+                    SpannableString(" ${song.title} ${SpecialCharacters.smblkcircle} ").setColor(
+                        colorSecondary
+                    )
+                )
 
             textViewTopSongs.setText(text, TextView.BufferType.SPANNABLE)
             if (textViewTopSongs.lineCount >= maxLines)
@@ -167,27 +178,46 @@ class CatalogArtistFragment : Fragment() {
         if (i < songs.size) {
             val start = text.length - postfix.length
             text
-                .insert(text.length - postfix.length,
-                    SpannableString(songs[i].artistName).setColor(colorPrimary))
-                .insert(text.length - postfix.length,
-                    SpannableString(" ${songs[i].title} ${SpecialCharacters.smblkcircle} ").setColor(colorSecondary))
+                .insert(
+                    text.length - postfix.length,
+                    SpannableString(songs[i].artistName).setColor(colorPrimary)
+                )
+                .insert(
+                    text.length - postfix.length,
+                    SpannableString(" ${songs[i].title} ${SpecialCharacters.smblkcircle} ").setColor(
+                        colorSecondary
+                    )
+                )
 
             textViewTopSongs.setText(text, TextView.BufferType.SPANNABLE)
 
             if (textViewTopSongs.lineCount > maxLines)
                 text.replace(start, text.length - postfix.length, "")
         }
-        text.setSpan(StyleSpan(Typeface.BOLD), text.length - postfix.length, text.length, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE)
+        text.setSpan(
+            StyleSpan(Typeface.BOLD),
+            text.length - postfix.length,
+            text.length,
+            SpannableString.SPAN_INCLUSIVE_EXCLUSIVE
+        )
         textViewTopSongs.setText(text, TextView.BufferType.SPANNABLE)
 
         textViewPlay.setOnClickListener {
-            mainActivityAction.playMedia(songs.map { AppleMusicTrackMediaHolder(it) }, null, CustomMode.Shuffle)
+            mainActivityAction.playMedia(
+                songs.map { AppleMusicTrackMediaHolder(it) },
+                null,
+                CustomMode.Shuffle
+            )
         }
         textViewPlay.visibility = View.VISIBLE
 
         textViewTopSongs.setOnClickListener {
             mainActivityAction.changeFragment(
-                CatalogArtistTracksFragment.newInstance(artist.name, artist.sectionTopSongs.sectionViewAllUrl) )
+                CatalogArtistTracksFragment.newInstance(
+                    artist.name,
+                    artist.sectionTopSongs.sectionViewAllUrl
+                )
+            )
         }
     }
 
@@ -204,13 +234,22 @@ class CatalogArtistFragment : Fragment() {
 
         val textViewTitle = TextView(context).apply {
             text = resources.getString(R.string.label_music_albums)
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.content_medium_text_size))
+            setTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                resources.getDimension(R.dimen.content_medium_text_size)
+            )
             setTextColor(ContextCompat.getColor(context, R.color.contentColorPrimary))
             gravity = Gravity.CENTER_HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT).apply {
-                this.setMargins(0, resources.getDimension(R.dimen.content_large_text_size).toInt(), 0, 0)
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                this.setMargins(
+                    0,
+                    resources.getDimension(R.dimen.content_large_text_size).toInt(),
+                    0,
+                    0
+                )
             }
         }
         linearLayout.addView(textViewTitle)
@@ -220,7 +259,7 @@ class CatalogArtistFragment : Fragment() {
             if (type != null) albums.remove(latestAlbum)
             addAlbum(latestAlbum, type, true)
         }
-        for ((album, type) in albums.asSequence().take(if (latestAlbum == null) maxCount else maxCount-1)) {
+        for ((album, type) in albums.asSequence().take(if (latestAlbum == null) maxCount else maxCount - 1)) {
             addAlbum(album, type, false)
         }
 
@@ -228,7 +267,10 @@ class CatalogArtistFragment : Fragment() {
             text = resources.getString(R.string.label_term_viewall).messageFormat(
                 resources.getString(R.string.label_music_albums)
             )
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.content_small_text_size))
+            setTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                resources.getDimension(R.dimen.content_small_text_size)
+            )
             setTextColor(ContextCompat.getColor(context, R.color.contentColorPrimary))
             gravity = Gravity.CENTER
             setRoundedRadius(30f)
@@ -238,18 +280,21 @@ class CatalogArtistFragment : Fragment() {
             duration = 50L
             setPadding(40, 0, 40, 0)
             layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, 60).apply {
+                LinearLayout.LayoutParams.WRAP_CONTENT, 60
+            ).apply {
                 gravity = Gravity.CENTER_HORIZONTAL
             }
         }
         textViewAllAlbums.setOnClickListener {
-            mainActivityAction.changeFragment(CatalogArtistAlbumsFragment.newInstance(
-                artist.name,
-                artist.sectionFullAlbums?.sectionViewAllUrl,
-                artist.sectionSingleAlbums?.sectionViewAllUrl,
-                artist.sectionLiveAlbums?.sectionViewAllUrl,
-                artist.sectionCompilationAlbums?.sectionViewAllUrl
-            ))
+            mainActivityAction.changeFragment(
+                CatalogArtistAlbumsFragment.newInstance(
+                    artist.name,
+                    artist.sectionFullAlbums?.sectionViewAllUrl,
+                    artist.sectionSingleAlbums?.sectionViewAllUrl,
+                    artist.sectionLiveAlbums?.sectionViewAllUrl,
+                    artist.sectionCompilationAlbums?.sectionViewAllUrl
+                )
+            )
         }
         linearLayout.addView(textViewAllAlbums)
     }
@@ -262,7 +307,7 @@ class CatalogArtistFragment : Fragment() {
 
         val imageUrl = album.coverart?.sourceByShortSideEquals(300)?.url
         if (imageUrl != null)
-            Singleton.imageRequests.getImage(imageUrl, object: ResponseListener<Bitmap> {
+            Singleton.imageRequests.getImage(imageUrl, object : ResponseListener<Bitmap> {
                 override fun onResponse(response: Bitmap) {
                     imageView.setImageBitmap(response)
                 }
@@ -272,8 +317,8 @@ class CatalogArtistFragment : Fragment() {
         textViewTitle.text = album.title
 
         val release = if (isLatest) resources.getString(R.string.label_music_latest_release)
-                      else album.releaseDate.year.toString()
-        val typeStrId = when(type) {
+        else album.releaseDate.year.toString()
+        val typeStrId = when (type) {
             0 -> R.string.label_music_album
             1 -> R.string.label_music_album_single
             2 -> R.string.label_music_album_live

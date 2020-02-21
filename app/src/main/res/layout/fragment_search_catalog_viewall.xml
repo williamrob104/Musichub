@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
-                tools:context=".ui.SearchCatalogViewallFragment">
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context=".ui.SearchCatalogViewallFragment">
 
     <androidx.appcompat.widget.Toolbar
             android:id="@+id/fragment_search_catalog_viewall_tb_title"
@@ -12,13 +13,13 @@
             android:background="?attr/colorPrimary"
             android:theme="?attr/actionBarTheme"
             android:minHeight="?attr/actionBarSize"
-            app:navigationIcon="?attr/homeAsUpIndicator"/>
+            app:navigationIcon="?attr/homeAsUpIndicator" />
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragment_search_catalog_viewall_rv_items"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/fragment_search_catalog_viewall_tb_title"/>
+            android:layout_below="@id/fragment_search_catalog_viewall_tb_title" />
 
     <TextView
             android:id="@+id/fragment_search_catalog_viewall_tv_msg"

@@ -4,7 +4,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
 
 
-private fun Element.getElementOrNull(elementPredicate: (Element)->Boolean): Element? {
+private fun Element.getElementOrNull(elementPredicate: (Element) -> Boolean): Element? {
     if (elementPredicate(this))
         return this
     for (child in this.children()) {
@@ -16,8 +16,9 @@ private fun Element.getElementOrNull(elementPredicate: (Element)->Boolean): Elem
 }
 
 internal fun Element.getElementByClass(className: String): Element {
-    return this.getElementOrNull { className in it.classNames() } ?:
-    throw IllegalArgumentException("no Element containing className '$className'")
+    return this.getElementOrNull { className in it.classNames() } ?: throw IllegalArgumentException(
+        "no Element containing className '$className'"
+    )
 }
 
 internal fun Element.getElementByClassOrNull(className: String): Element? {
@@ -25,8 +26,8 @@ internal fun Element.getElementByClassOrNull(className: String): Element? {
 }
 
 internal fun Element.getElementByTag(tagName: String): Element {
-    return this.getElementOrNull { it.tagName() == tagName } ?:
-    throw IllegalArgumentException("no Element with tagName '$tagName'")
+    return this.getElementOrNull { it.tagName() == tagName }
+        ?: throw IllegalArgumentException("no Element with tagName '$tagName'")
 }
 
 internal fun unescapeHtml(htmlString: String): String {

@@ -4,13 +4,15 @@ import android.os.Handler
 import java.util.concurrent.ExecutorService
 
 
-class CallbackExecutor(private val executorService: ExecutorService,
-                       private val handler: Handler?) {
+class CallbackExecutor(
+    private val executorService: ExecutorService,
+    private val handler: Handler?
+) {
 
-    fun <T> executeCallback(listener: ResponseListener<T>, callable: ()->T): Cancellable {
+    fun <T> executeCallback(listener: ResponseListener<T>, callable: () -> T): Cancellable {
         val task = CallbackExecutorTask(listener, callable)
         val future = executorService.submit(task)
-        return object: Cancellable {
+        return object : Cancellable {
             override fun cancel() {
                 task.cancel()
                 future.cancel(true)
@@ -24,7 +26,8 @@ class CallbackExecutor(private val executorService: ExecutorService,
 
     private inner class CallbackExecutorTask<T>(
         private val listener: ResponseListener<T>,
-        private val callable: ()->T): Runnable {
+        private val callable: () -> T
+    ) : Runnable {
 
         private var cancelled = false
 
@@ -33,12 +36,10 @@ class CallbackExecutor(private val executorService: ExecutorService,
                 return
             val result = try {
                 callable()
-            }
-            catch (e: InterruptedException) {
+            } catch (e: InterruptedException) {
                 cancelled = true
                 return
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 synchronized(cancelled) {
                     if (!cancelled) {
                         if (handler != null)

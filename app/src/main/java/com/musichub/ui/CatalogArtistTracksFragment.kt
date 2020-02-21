@@ -19,9 +19,9 @@ import com.musichub.R
 import com.musichub.concurrent.Cancellable
 import com.musichub.concurrent.ResponseListener
 import com.musichub.playback.AppleMusicTrackMediaHolder
-import com.musichub.resource.AppleMusicSection
-import com.musichub.resource.AppleMusicSong3
-import com.musichub.resource.AppleMusicTrack
+import com.musichub.scraper.AppleMusicSection
+import com.musichub.scraper.AppleMusicSong3
+import com.musichub.scraper.AppleMusicTrack
 import com.musichub.singleton.Singleton
 import com.musichub.util.messageFormat
 
@@ -64,7 +64,11 @@ class CatalogArtistTracksFragment : Fragment() {
         mainActivityAction = activity as MainActivityAction
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_catalog_artist_tracks, container, false)
     }
 
@@ -105,15 +109,17 @@ class CatalogArtistTracksFragment : Fragment() {
 
         requestCancellable = Singleton.appleMusicScraper.getSectionSongs(
             sectionTopSongsUrl,
-            object: ResponseListener<AppleMusicSection<AppleMusicSong3>> {
+            object : ResponseListener<AppleMusicSection<AppleMusicSong3>> {
                 override fun onResponse(response: AppleMusicSection<AppleMusicSong3>) {
                     progressBar.visibility = View.INVISIBLE
                     val trackList = response.entityList.toMutableList()
                     if (trackList.isNotEmpty()) {
                         trackList.sortByDescending { it.popularity }
-                        recyclerView.adapter = CatalogArtistTracksAdapter(context!!, mainActivityAction, trackList)
+                        recyclerView.adapter =
+                            CatalogArtistTracksAdapter(context!!, mainActivityAction, trackList)
                     }
                 }
+
                 override fun onError(error: Exception) {
                     progressBar.visibility = View.INVISIBLE
                     textViewError.visibility = View.VISIBLE
@@ -129,7 +135,7 @@ private class CatalogArtistTracksAdapter(
     private val context: Context,
     private val mainActivityAction: MainActivityAction,
     private val trackList: List<AppleMusicTrack>
-): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val mediaList = trackList.map { AppleMusicTrackMediaHolder(it) }
 
@@ -152,10 +158,12 @@ private class CatalogArtistTracksAdapter(
 
 
     private val imageSize = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, 60f, context.resources.displayMetrics).toInt()
+        TypedValue.COMPLEX_UNIT_DIP, 60f, context.resources.displayMetrics
+    ).toInt()
 
-    private inner class CatalogTrack(view: View): RecyclerView.ViewHolder(view) {
-        private val imageViewCoverart: ImageView = view.findViewById(R.id.item_catalog_track_iv_coverart)
+    private inner class CatalogTrack(view: View) : RecyclerView.ViewHolder(view) {
+        private val imageViewCoverart: ImageView =
+            view.findViewById(R.id.item_catalog_track_iv_coverart)
         private val textViewTitle: TextView = view.findViewById(R.id.item_catalog_track_tv_title)
         private val textViewLabel: TextView = view.findViewById(R.id.item_catalog_track_tv_label)
         private var cancellable: Cancellable? = null
@@ -172,13 +180,14 @@ private class CatalogArtistTracksAdapter(
             textViewLabel.text = track.artistName
             val imageUrl = track.coverart?.sourceByShortSideEquals(imageSize)?.url
             if (imageUrl != null) {
-                cancellable = Singleton.imageRequests.getImage(imageUrl, object: ResponseListener<Bitmap> {
-                    override fun onResponse(response: Bitmap) {
-                        imageViewCoverart.setImageBitmap(response)
-                    }
+                cancellable =
+                    Singleton.imageRequests.getImage(imageUrl, object : ResponseListener<Bitmap> {
+                        override fun onResponse(response: Bitmap) {
+                            imageViewCoverart.setImageBitmap(response)
+                        }
 
-                    override fun onError(error: Exception) {}
-                })
+                        override fun onError(error: Exception) {}
+                    })
             }
         }
 

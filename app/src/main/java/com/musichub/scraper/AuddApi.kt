@@ -1,4 +1,4 @@
-package com.musichub.resource
+package com.musichub.scraper
 
 import com.musichub.concurrent.Cancellable
 import com.musichub.concurrent.ResponseListener
@@ -15,9 +15,12 @@ import kotlin.random.Random
 class AuddApi(private val basicHttpRequests: BasicHttpRequests) {
     private val baseUrl = "https://api.audd.io/"
 
-    fun recognizeMusic(musicFile: ByteArray, listener: ResponseListener<AuddRecognition>): Cancellable {
+    fun recognizeMusic(
+        musicFile: ByteArray,
+        listener: ResponseListener<AuddRecognition>
+    ): Cancellable {
         val params = mapOf("method" to "recognize", "return" to "timecode,itunes")
-        val url = UrlParse.joinUrl(baseUrl, params=UrlParse.encodeParams(params))
+        val url = UrlParse.joinUrl(baseUrl, params = UrlParse.encodeParams(params))
 
         val attachmentName = "file"
         val attachmentFileName = "file"
@@ -51,8 +54,11 @@ class AuddApi(private val basicHttpRequests: BasicHttpRequests) {
             val result = it.getJSONObject("result")
             val trackTitle = result.getString("title")
             val artistName = result.getString("artist")
-            val albumTitle = try { result.getJSONObject("itunes").getString("collectionName") }
-                             catch (e: JSONException) { result.getString("album") }
+            val albumTitle = try {
+                result.getJSONObject("itunes").getString("collectionName")
+            } catch (e: JSONException) {
+                result.getString("album")
+            }
             val timeCode = parseTime(result.getString("timecode"))
 
             AuddRecognition(trackTitle, artistName, albumTitle, timeCode)
@@ -62,10 +68,10 @@ class AuddApi(private val basicHttpRequests: BasicHttpRequests) {
 
 
 data class AuddRecognition(
-        val trackTitle: String,
-        val artistName: String,
-        val albumTitle: String,
-        val timeCode: Int
+    val trackTitle: String,
+    val artistName: String,
+    val albumTitle: String,
+    val timeCode: Int
 )
 
-class AuddError(errMsg: String): Exception(errMsg)
+class AuddError(errMsg: String) : Exception(errMsg)

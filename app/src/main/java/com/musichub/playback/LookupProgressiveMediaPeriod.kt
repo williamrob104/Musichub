@@ -2,8 +2,6 @@ package com.musichub.playback
 
 import android.net.Uri
 import android.util.Log
-import com.musichub.concurrent.Cancellable
-import com.musichub.concurrent.ResponseListener
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.SeekParameters
 import com.google.android.exoplayer2.drm.DrmSessionManager
@@ -14,10 +12,12 @@ import com.google.android.exoplayer2.trackselection.TrackSelection
 import com.google.android.exoplayer2.upstream.Allocator
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy
+import com.musichub.concurrent.Cancellable
+import com.musichub.concurrent.ResponseListener
 
 
 class LookupProgressiveMediaPeriod(
-    private val lookupCallback: (ResponseListener<Uri>)->Cancellable,
+    private val lookupCallback: (ResponseListener<Uri>) -> Cancellable,
     private val dataSource: DataSource,
     private val extractors: Array<Extractor>,
     private val drmSessionManager: DrmSessionManager<ExoMediaCrypto>,
@@ -27,13 +27,13 @@ class LookupProgressiveMediaPeriod(
     private val allocator: Allocator,
     private val customCacheKey: String?,
     private val continueLoadingCheckIntervalBytes: Int
-): MediaPeriod {
+) : MediaPeriod {
 
     private var progressiveMediaPeriod: ProgressiveMediaPeriod? = null
     private var cancellable: Cancellable? = null
 
     override fun prepare(callback: MediaPeriod.Callback?, positionUs: Long) {
-        cancellable = lookupCallback(object: ResponseListener<Uri> {
+        cancellable = lookupCallback(object : ResponseListener<Uri> {
             override fun onResponse(response: Uri) {
                 progressiveMediaPeriod = ProgressiveMediaPeriod(
                     response,
@@ -47,7 +47,7 @@ class LookupProgressiveMediaPeriod(
                     customCacheKey,
                     continueLoadingCheckIntervalBytes
                 )
-                progressiveMediaPeriod!!.prepare(object: MediaPeriod.Callback {
+                progressiveMediaPeriod!!.prepare(object : MediaPeriod.Callback {
                     override fun onPrepared(mediaPeriod: MediaPeriod?) {
                         callback?.onPrepared(this@LookupProgressiveMediaPeriod)
                     }
@@ -83,7 +83,8 @@ class LookupProgressiveMediaPeriod(
         positionUs: Long
     ): Long {
         return progressiveMediaPeriod?.selectTracks(
-            selections, mayRetainStreamFlags, streams, streamResetFlags, positionUs) ?: 0L
+            selections, mayRetainStreamFlags, streams, streamResetFlags, positionUs
+        ) ?: 0L
     }
 
     override fun discardBuffer(positionUs: Long, toKeyframe: Boolean) {
@@ -98,7 +99,10 @@ class LookupProgressiveMediaPeriod(
         return progressiveMediaPeriod?.seekToUs(positionUs) ?: 0L
     }
 
-    override fun getAdjustedSeekPositionUs(positionUs: Long, seekParameters: SeekParameters?): Long {
+    override fun getAdjustedSeekPositionUs(
+        positionUs: Long,
+        seekParameters: SeekParameters?
+    ): Long {
         return progressiveMediaPeriod?.getAdjustedSeekPositionUs(positionUs, seekParameters) ?: 0L
     }
 

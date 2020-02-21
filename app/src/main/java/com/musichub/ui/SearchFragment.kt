@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.musichub.R
 import com.google.android.material.tabs.TabLayout
+import com.musichub.R
 
 
 class SearchFragment : Fragment(), FragmentActions {
@@ -22,16 +22,21 @@ class SearchFragment : Fragment(), FragmentActions {
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
 
-    private val onPageChangeListener = object: ViewPager.OnPageChangeListener {
+    private val onPageChangeListener = object : ViewPager.OnPageChangeListener {
         override fun onPageSelected(position: Int) {
             currentSearchTargetFragment.onPageChange(searchView.query.toString())
         }
 
         override fun onPageScrollStateChanged(state: Int) {}
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+        override fun onPageScrolled(
+            position: Int,
+            positionOffset: Float,
+            positionOffsetPixels: Int
+        ) {
+        }
     }
 
-    private val onQueryTextListener = object: SearchView.OnQueryTextListener {
+    private val onQueryTextListener = object : SearchView.OnQueryTextListener {
         override fun onQueryTextChange(newText: String?): Boolean {
             if (newText != null)
                 currentSearchTargetFragment.onQueryTextChange(newText)
@@ -39,7 +44,8 @@ class SearchFragment : Fragment(), FragmentActions {
         }
 
         override fun onQueryTextSubmit(query: String?): Boolean {
-            val imm = context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
+            val imm =
+                context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
             imm?.hideSoftInputFromWindow(view?.windowToken, 0)
             searchView.clearFocus()
 
@@ -49,13 +55,14 @@ class SearchFragment : Fragment(), FragmentActions {
         }
     }
 
-    inner class ViewPagerAdapter(fm: FragmentManager): FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    inner class ViewPagerAdapter(fm: FragmentManager) :
+        FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getCount(): Int {
             return 2
         }
 
         override fun getItem(position: Int): Fragment {
-            return when(position) {
+            return when (position) {
                 0 -> SearchCatalogFragment()
                 1 -> SearchYoutubeFragment()
                 else -> throw RuntimeException()
@@ -76,12 +83,17 @@ class SearchFragment : Fragment(), FragmentActions {
     private val currentSearchTargetFragment: SearchTargetFragment
         get() {
             val fragment = childFragmentManager.findFragmentByTag(
-                "android:switcher:" + R.id.fragment_search_vp_targets + ":" + viewPager.currentItem)
+                "android:switcher:" + R.id.fragment_search_vp_targets + ":" + viewPager.currentItem
+            )
             return fragment as SearchTargetFragment
         }
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_search, container, false)
     }
 
@@ -123,7 +135,7 @@ class SearchFragment : Fragment(), FragmentActions {
 }
 
 
-abstract class SearchTargetFragment: Fragment() {
+abstract class SearchTargetFragment : Fragment() {
     abstract fun onQueryTextChange(query: String)
 
     abstract fun onQueryTextSubmit(query: String)

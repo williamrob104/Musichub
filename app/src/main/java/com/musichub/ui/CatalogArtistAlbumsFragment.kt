@@ -19,8 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.musichub.R
 import com.musichub.concurrent.Cancellable
 import com.musichub.concurrent.ResponseListener
-import com.musichub.resource.AppleMusicAlbum3
-import com.musichub.resource.AppleMusicSection
+import com.musichub.scraper.AppleMusicAlbum3
+import com.musichub.scraper.AppleMusicSection
 import com.musichub.singleton.Singleton
 import com.musichub.util.messageFormat
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -49,11 +49,13 @@ class CatalogArtistAlbumsFragment : Fragment() {
         private const val ARG_SECTION_COMPILATION_ALBUM_URL = "param5"
 
         @JvmStatic
-        fun newInstance(artistName: String,
-                        sectionAlbumUrl: String?,
-                        sectionSingleAlbumUrl: String?,
-                        sectionLiveAlbumUrl: String?,
-                        sectionCompilationAlbumUrl: String?): Fragment {
+        fun newInstance(
+            artistName: String,
+            sectionAlbumUrl: String?,
+            sectionSingleAlbumUrl: String?,
+            sectionLiveAlbumUrl: String?,
+            sectionCompilationAlbumUrl: String?
+        ): Fragment {
             return CatalogArtistAlbumsFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_ARTIST_NAME, artistName)
@@ -78,7 +80,11 @@ class CatalogArtistAlbumsFragment : Fragment() {
         mainActivityAction = activity as MainActivityAction
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_catalog_artist_albums, container, false)
     }
 
@@ -121,28 +127,30 @@ class CatalogArtistAlbumsFragment : Fragment() {
 
         sectionIdx = 0
         updating = true
-        Singleton.appleMusicScraper.getSectionAlbums(sectionsUrls[sectionIdx].first, object: ResponseListener<AppleMusicSection<AppleMusicAlbum3>> {
-            override fun onResponse(response: AppleMusicSection<AppleMusicAlbum3>) {
-                progressBar.visibility = View.INVISIBLE
-                val type = sectionsUrls[sectionIdx].second
-                val albumList = response.entityList
-                if (albumList.isNotEmpty()) {
-                    recyclerView.adapter = CatalogArtistAlbumsAdapter(
-                        context!!, mainActivityAction,
-                        getTypeString(type), albumList.sortedByDescending { it.releaseDate })
+        Singleton.appleMusicScraper.getSectionAlbums(
+            sectionsUrls[sectionIdx].first,
+            object : ResponseListener<AppleMusicSection<AppleMusicAlbum3>> {
+                override fun onResponse(response: AppleMusicSection<AppleMusicAlbum3>) {
+                    progressBar.visibility = View.INVISIBLE
+                    val type = sectionsUrls[sectionIdx].second
+                    val albumList = response.entityList
+                    if (albumList.isNotEmpty()) {
+                        recyclerView.adapter = CatalogArtistAlbumsAdapter(
+                            context!!, mainActivityAction,
+                            getTypeString(type), albumList.sortedByDescending { it.releaseDate })
+                    }
+                    updating = false
                 }
-                updating = false
-            }
 
-            override fun onError(error: Exception) {
-                progressBar.visibility = View.INVISIBLE
-                textViewError.visibility = View.VISIBLE
-                Log.i("MusicBox", "artistAlbums.onError", error)
-                updating = false
-            }
-        }).let { requestCancellable.add(it) }
+                override fun onError(error: Exception) {
+                    progressBar.visibility = View.INVISIBLE
+                    textViewError.visibility = View.VISIBLE
+                    Log.i("MusicBox", "artistAlbums.onError", error)
+                    updating = false
+                }
+            }).let { requestCancellable.add(it) }
 
-        recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
@@ -152,36 +160,42 @@ class CatalogArtistAlbumsFragment : Fragment() {
                 if (adapter == null ||
                     layoutManager.findLastVisibleItemPosition() >= adapter.itemCount - 5 &&
                     !updating &&
-                    (++sectionIdx) < sectionsUrls.size) {
+                    (++sectionIdx) < sectionsUrls.size
+                ) {
                     updating = true
                     val type = sectionsUrls[sectionIdx].second
-                    Singleton.appleMusicScraper.getSectionAlbums(sectionsUrls[sectionIdx].first, object: ResponseListener<AppleMusicSection<AppleMusicAlbum3>> {
-                        override fun onResponse(response: AppleMusicSection<AppleMusicAlbum3>) {
-                            val albumList = response.entityList
-                            if (albumList.isNotEmpty()) {
-                                if (recyclerView.adapter == null)
-                                    recyclerView.adapter = CatalogArtistAlbumsAdapter(
-                                        context!!, mainActivityAction,
-                                        getTypeString(type), albumList.sortedByDescending { it.releaseDate })
-                                else
-                                    (recyclerView.adapter as CatalogArtistAlbumsAdapter?)?.add(
-                                        getTypeString(type), albumList.sortedByDescending { it.releaseDate })
+                    Singleton.appleMusicScraper.getSectionAlbums(
+                        sectionsUrls[sectionIdx].first,
+                        object : ResponseListener<AppleMusicSection<AppleMusicAlbum3>> {
+                            override fun onResponse(response: AppleMusicSection<AppleMusicAlbum3>) {
+                                val albumList = response.entityList
+                                if (albumList.isNotEmpty()) {
+                                    if (recyclerView.adapter == null)
+                                        recyclerView.adapter = CatalogArtistAlbumsAdapter(
+                                            context!!,
+                                            mainActivityAction,
+                                            getTypeString(type),
+                                            albumList.sortedByDescending { it.releaseDate })
+                                    else
+                                        (recyclerView.adapter as CatalogArtistAlbumsAdapter?)?.add(
+                                            getTypeString(type),
+                                            albumList.sortedByDescending { it.releaseDate })
+                                }
+                                updating = false
                             }
-                            updating = false
-                        }
 
-                        override fun onError(error: Exception) {
-                            --sectionIdx
-                            updating = false
-                        }
-                    }).let { requestCancellable.add(it) }
+                            override fun onError(error: Exception) {
+                                --sectionIdx
+                                updating = false
+                            }
+                        }).let { requestCancellable.add(it) }
                 }
             }
         })
     }
 
     private fun getTypeString(type: Int): String {
-        val typeStrId = when(type) {
+        val typeStrId = when (type) {
             0 -> R.string.label_music_album
             1 -> R.string.label_music_album_single
             2 -> R.string.label_music_album_live
@@ -198,7 +212,7 @@ private class CatalogArtistAlbumsAdapter(
     private val mainActivityAction: MainActivityAction,
     typeString: String,
     albumList: List<AppleMusicAlbum3>
-): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val displayList = ArrayList<Any>()
 
@@ -224,7 +238,10 @@ private class CatalogArtistAlbumsAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == 0) {
             TextViewHolder(TextView(context).apply {
-                setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.content_medium_text_size))
+                setTextSize(
+                    TypedValue.COMPLEX_UNIT_PX,
+                    resources.getDimension(R.dimen.content_medium_text_size)
+                )
                 setTextColor(ContextCompat.getColor(context, R.color.contentColorPrimary))
                 setPadding(padding, padding, 0, 0)
             })
@@ -243,18 +260,21 @@ private class CatalogArtistAlbumsAdapter(
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         //if (holder is CatalogAlbum)
-            //holder.recycle()
+        //holder.recycle()
     }
 
 
     private val imageSize = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, 80f, context.resources.displayMetrics).toInt()
+        TypedValue.COMPLEX_UNIT_DIP, 80f, context.resources.displayMetrics
+    ).toInt()
 
     private val padding = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, 15f, context.resources.displayMetrics).toInt()
+        TypedValue.COMPLEX_UNIT_DIP, 15f, context.resources.displayMetrics
+    ).toInt()
 
-    private inner class CatalogAlbum(view: View): RecyclerView.ViewHolder(view) {
-        private val imageViewCoverart: ImageView = view.findViewById(R.id.item_catalog_album_iv_coverart)
+    private inner class CatalogAlbum(view: View) : RecyclerView.ViewHolder(view) {
+        private val imageViewCoverart: ImageView =
+            view.findViewById(R.id.item_catalog_album_iv_coverart)
         private val textViewTitle: TextView = view.findViewById(R.id.item_catalog_album_tv_title)
         private val textViewLabel: TextView = view.findViewById(R.id.item_catalog_album_tv_label)
         private var cancellable: Cancellable? = null
@@ -273,13 +293,14 @@ private class CatalogArtistAlbumsAdapter(
 
             val imageUrl = album.coverart?.sourceByShortSideEquals(imageSize)?.url
             if (imageUrl != null) {
-                cancellable = Singleton.imageRequests.getImage(imageUrl, object: ResponseListener<Bitmap> {
-                    override fun onResponse(response: Bitmap) {
-                        imageViewCoverart.setImageBitmap(response)
-                    }
+                cancellable =
+                    Singleton.imageRequests.getImage(imageUrl, object : ResponseListener<Bitmap> {
+                        override fun onResponse(response: Bitmap) {
+                            imageViewCoverart.setImageBitmap(response)
+                        }
 
-                    override fun onError(error: Exception) {}
-                })
+                        override fun onError(error: Exception) {}
+                    })
             }
         }
 
@@ -289,7 +310,7 @@ private class CatalogArtistAlbumsAdapter(
         }
     }
 
-    private inner class TextViewHolder(private val textView: TextView):
+    private inner class TextViewHolder(private val textView: TextView) :
         RecyclerView.ViewHolder(textView) {
         fun setData(typeString: String) {
             textView.text = typeString

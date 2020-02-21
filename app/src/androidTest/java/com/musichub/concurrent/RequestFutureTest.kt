@@ -9,14 +9,15 @@ import java.util.concurrent.TimeUnit
 
 class RequestFutureTest {
     private fun <T> delayedResponse(delayMs: Long, response: T, listener: ResponseListener<T>) {
-        Timer().schedule(object: TimerTask() {
+        Timer().schedule(object : TimerTask() {
             override fun run() {
                 listener.onResponse(response)
             }
         }, delayMs)
     }
 
-    @Test fun testGet() {
+    @Test
+    fun testGet() {
         val message = "message"
         val future = RequestFuture<String>()
         delayedResponse(500, message, future)
@@ -24,7 +25,8 @@ class RequestFutureTest {
         assertEquals(response, message)
     }
 
-    @Test fun testIsDone() {
+    @Test
+    fun testIsDone() {
         val message = "message"
         val future = RequestFuture<String>()
         delayedResponse(500, message, future)

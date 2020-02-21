@@ -13,7 +13,8 @@ private val basicHttpRequests: BasicHttpRequests = HttpUrlClient()
 
 class HttpUrlClientTest {
 
-    @Test fun testHttpGETString() {
+    @Test
+    fun testHttpGETString() {
         val url = "https://httpbin.org/get"
         val headers = mapOf("User-Agent" to "HttpUrlClient")
         val future = RequestFuture<String>()
@@ -27,11 +28,12 @@ class HttpUrlClientTest {
             assertEquals(responseJson.getJSONObject("headers")[key], value)
     }
 
-    @Test fun testHttpGETJson() {
+    @Test
+    fun testHttpGETJson() {
         val url = "https://httpbin.org/get?key=value"
         val headers = mapOf("User-Agent" to "HttpUrlClient")
         val future = RequestFuture<JSONObject>()
-        basicHttpRequests.httpGETJson(url, headers,  future) { it }
+        basicHttpRequests.httpGETJson(url, headers, future) { it }
 
         val responseJson = future.get(10, TimeUnit.SECONDS)
 
@@ -41,25 +43,35 @@ class HttpUrlClientTest {
             assertEquals(responseJson.getJSONObject("headers")[key], value)
     }
 
-    @Test fun testHttpGETHtml() {
+    @Test
+    fun testHttpGETHtml() {
         val url = "http://help.websiteos.com/websiteos/example_of_a_simple_html_page.htm"
         val header = mapOf("User-Agent" to "HttpUrlClient")
         val future = RequestFuture<Document>()
 
-        basicHttpRequests.httpGETHtml(url, header,  future) { it }
+        basicHttpRequests.httpGETHtml(url, header, future) { it }
 
         val responseHtml = future.get(10, TimeUnit.SECONDS)
         assertEquals(responseHtml.title(), "Example of a simple HTML page")
-        assertEquals(responseHtml.body().getElementsByTag("h1").text(),
-                "Example of a simple HTML page")
+        assertEquals(
+            responseHtml.body().getElementsByTag("h1").text(),
+            "Example of a simple HTML page"
+        )
     }
 
-    @Test fun testHttpPOSTJson() {
+    @Test
+    fun testHttpPOSTJson() {
         val url = "https://httpbin.org/post?key=value"
-        val headers = mapOf("User-Agent" to "HttpUrlClient", "Content-Type" to UrlParse.DEFAULT_CONTENT_TYPE)
+        val headers =
+            mapOf("User-Agent" to "HttpUrlClient", "Content-Type" to UrlParse.DEFAULT_CONTENT_TYPE)
         val form = mapOf("user" to "myUserName", "password" to "123456")
         val future = RequestFuture<JSONObject>()
-        basicHttpRequests.httpPOSTJson(url, headers, encodeParams(form).toByteArray(), future) { it }
+        basicHttpRequests.httpPOSTJson(
+            url,
+            headers,
+            encodeParams(form).toByteArray(),
+            future
+        ) { it }
 
         val responseJson = future.get(10, TimeUnit.SECONDS)
 

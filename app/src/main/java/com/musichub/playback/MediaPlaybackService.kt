@@ -16,12 +16,6 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.app.TaskStackBuilder
 import androidx.media.session.MediaButtonReceiver
-import com.musichub.R
-import com.musichub.concurrent.ResponseListener
-import com.musichub.singleton.Flags
-import com.musichub.singleton.Singleton
-import com.musichub.ui.MediaPlayActivity
-import com.musichub.util.squareCropTop
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
 import com.google.android.exoplayer2.audio.AudioAttributes
@@ -30,10 +24,16 @@ import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import com.musichub.R
+import com.musichub.concurrent.ResponseListener
+import com.musichub.singleton.Flags
+import com.musichub.singleton.Singleton
+import com.musichub.ui.MediaPlayActivity
+import com.musichub.util.squareCropTop
 import java.util.concurrent.CopyOnWriteArraySet
 
 
-class MediaPlaybackService: Service(), MediaPlayer {
+class MediaPlaybackService : Service(), MediaPlayer {
 
     private val PLAYBACK_CHANNEL_ID = "PlaybackServiceChannel"
     private val PLAYBACK_NOTIFICATION_ID = 1927
@@ -52,7 +52,7 @@ class MediaPlaybackService: Service(), MediaPlayer {
     private var cacheRepeatMode: MediaPlayer.RepeatMode = MediaPlayer.RepeatMode.OFF
     private var cacheShuffleEnabled: Boolean = false
 
-    private val eventListener = object: Player.EventListener {
+    private val eventListener = object : Player.EventListener {
         override fun onPlayerError(error: ExoPlaybackException) {
             val tag = "MusicBox"
             Log.i("MusicBox", "ExoPlayer.onPlayerError")
@@ -112,7 +112,7 @@ class MediaPlaybackService: Service(), MediaPlayer {
         private fun checkOnMediaChanged() {
             val index = player.currentWindowIndex
             val temp = if (index in 0 until mediaHolderList.size) mediaHolderList[index]
-                       else null
+            else null
             if (temp != currentMediaHolder) {
                 currentMediaHolder = temp
                 for (listener in listeners)
@@ -121,7 +121,7 @@ class MediaPlaybackService: Service(), MediaPlayer {
         }
     }
 
-    private val noisyReceiver = object: BroadcastReceiver() {
+    private val noisyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             player.playWhenReady = false
         }
@@ -135,7 +135,8 @@ class MediaPlaybackService: Service(), MediaPlayer {
         Singleton.initialize(context)
         MediaHolder.initialize(context)
 
-        val rendersFactory = DefaultRenderersFactory(context).setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
+        val rendersFactory =
+            DefaultRenderersFactory(context).setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
         val trackSelector = DefaultTrackSelector()
         player = ExoPlayerFactory.newSimpleInstance(context, rendersFactory, trackSelector)
         player.addListener(eventListener)
@@ -145,8 +146,12 @@ class MediaPlaybackService: Service(), MediaPlayer {
         cacheShuffleEnabled = player.shuffleModeEnabled
 
         playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
-            context, PLAYBACK_CHANNEL_ID, R.string.app_name, R.string.app_name, PLAYBACK_NOTIFICATION_ID,
-            object: PlayerNotificationManager.MediaDescriptionAdapter {
+            context,
+            PLAYBACK_CHANNEL_ID,
+            R.string.app_name,
+            R.string.app_name,
+            PLAYBACK_NOTIFICATION_ID,
+            object : PlayerNotificationManager.MediaDescriptionAdapter {
                 override fun getCurrentContentTitle(player: Player): String {
                     return mediaHolderList[player.currentWindowIndex].title
                 }
@@ -155,16 +160,24 @@ class MediaPlaybackService: Service(), MediaPlayer {
                     return mediaHolderList[player.currentWindowIndex].subtitle
                 }
 
-                override fun getCurrentLargeIcon(player: Player, callback: PlayerNotificationManager.BitmapCallback): Bitmap? {
-                    val imageUrl = mediaHolderList[player.currentWindowIndex].image?.sourceByShortSideEquals(MediaHolder.LARGE_IMAGE_SIZE)?.url
+                override fun getCurrentLargeIcon(
+                    player: Player,
+                    callback: PlayerNotificationManager.BitmapCallback
+                ): Bitmap? {
+                    val imageUrl =
+                        mediaHolderList[player.currentWindowIndex].image?.sourceByShortSideEquals(
+                            MediaHolder.LARGE_IMAGE_SIZE
+                        )?.url
                     if (imageUrl != null)
-                        Singleton.imageRequests.getImage(imageUrl, object: ResponseListener<Bitmap> {
-                            override fun onResponse(response: Bitmap) {
-                                callback.onBitmap(response.squareCropTop())
-                            }
+                        Singleton.imageRequests.getImage(
+                            imageUrl,
+                            object : ResponseListener<Bitmap> {
+                                override fun onResponse(response: Bitmap) {
+                                    callback.onBitmap(response.squareCropTop())
+                                }
 
-                            override fun onError(error: Exception) {}
-                        })
+                                override fun onError(error: Exception) {}
+                            })
                     return null
                 }
 
@@ -176,12 +189,19 @@ class MediaPlaybackService: Service(), MediaPlayer {
                     }
                 }
             },
-            object: PlayerNotificationManager.NotificationListener {
-                override fun onNotificationPosted(notificationId: Int, notification: Notification, ongoing: Boolean) {
+            object : PlayerNotificationManager.NotificationListener {
+                override fun onNotificationPosted(
+                    notificationId: Int,
+                    notification: Notification,
+                    ongoing: Boolean
+                ) {
                     startForeground(notificationId, notification)
                 }
 
-                override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
+                override fun onNotificationCancelled(
+                    notificationId: Int,
+                    dismissedByUser: Boolean
+                ) {
                     if (dismissedByUser) {
                         player.playWhenReady = false
                         stopSelf()
@@ -210,8 +230,11 @@ class MediaPlaybackService: Service(), MediaPlayer {
         playerNotificationManager.setMediaSessionToken(mediaSession.sessionToken)
 
         mediaSessionConnector = MediaSessionConnector(mediaSession)
-        mediaSessionConnector.setQueueNavigator(object: TimelineQueueNavigator(mediaSession) {
-            override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
+        mediaSessionConnector.setQueueNavigator(object : TimelineQueueNavigator(mediaSession) {
+            override fun getMediaDescription(
+                player: Player,
+                windowIndex: Int
+            ): MediaDescriptionCompat {
                 return mediaHolderList[windowIndex].getMediaDescription(mediaSessionConnector::invalidateMediaSessionQueue)
             }
         })
@@ -238,7 +261,7 @@ class MediaPlaybackService: Service(), MediaPlayer {
         return PlaybackServiceBinder()
     }
 
-    inner class PlaybackServiceBinder: Binder() {
+    inner class PlaybackServiceBinder : Binder() {
         fun getService() = this@MediaPlaybackService
     }
 
@@ -279,7 +302,7 @@ class MediaPlaybackService: Service(), MediaPlayer {
         get() {
             val index = player.currentWindowIndex
             return if (index in 0 until mediaHolderList.size) mediaHolderList[index]
-                   else null
+            else null
         }
 
     override val duration: Long?
@@ -296,12 +319,14 @@ class MediaPlaybackService: Service(), MediaPlayer {
 
     override var playWhenReady: Boolean
         get() = cachePlayWhenReady
-        set(value) { player.playWhenReady = value }
+        set(value) {
+            player.playWhenReady = value
+        }
 
     override var repeatMode: MediaPlayer.RepeatMode
         get() = cacheRepeatMode
         set(value) {
-            player.repeatMode = when(value) {
+            player.repeatMode = when (value) {
                 MediaPlayer.RepeatMode.OFF -> Player.REPEAT_MODE_OFF
                 MediaPlayer.RepeatMode.ONE -> Player.REPEAT_MODE_ONE
                 MediaPlayer.RepeatMode.ALL -> Player.REPEAT_MODE_ALL
@@ -310,7 +335,9 @@ class MediaPlaybackService: Service(), MediaPlayer {
 
     override var shuffleEnabled: Boolean
         get() = cacheShuffleEnabled
-        set(value) { player.shuffleModeEnabled = value }
+        set(value) {
+            player.shuffleModeEnabled = value
+        }
 
     override val hasNext: Boolean
         get() = player.hasNext()
@@ -336,7 +363,7 @@ class MediaPlaybackService: Service(), MediaPlayer {
         }
     }
 
-    private fun mapRepeatMode(repeatMode:Int): MediaPlayer.RepeatMode {
+    private fun mapRepeatMode(repeatMode: Int): MediaPlayer.RepeatMode {
         return when (repeatMode) {
             Player.REPEAT_MODE_OFF -> MediaPlayer.RepeatMode.OFF
             Player.REPEAT_MODE_ONE -> MediaPlayer.RepeatMode.ONE

@@ -10,8 +10,7 @@ internal fun Bitmap.squareCropTop(): Bitmap {
         val size = height
         val x = (width - size) / 2
         return Bitmap.createBitmap(this, x, 0, size, size)
-    }
-    else {
+    } else {
         val size = width
         return Bitmap.createBitmap(this, 0, 0, size, size)
     }

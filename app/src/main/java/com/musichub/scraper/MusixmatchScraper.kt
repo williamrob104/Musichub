@@ -1,4 +1,4 @@
-package com.musichub.resource
+package com.musichub.scraper
 
 import com.musichub.concurrent.ResponseListener
 import com.musichub.networking.BasicHttpRequests
@@ -13,8 +13,10 @@ import org.jsoup.nodes.Document
 class MusixmatchScraper(private val basicHttpRequests: BasicHttpRequests) {
     private val baseUrl = "https://www.musixmatch.com"
 
-    fun searchTracks(query: String, page: Int=1,
-                     listener: ResponseListener<MusixmatchSearch<MusixmatchTrack>>) {
+    fun searchTracks(
+        query: String, page: Int = 1,
+        listener: ResponseListener<MusixmatchSearch<MusixmatchTrack>>
+    ) {
         val url = joinUrl(baseUrl, "search", encodeAll(query), "tracks", page.toString())
         basicHttpRequests.httpGETHtml(url, null, listener) {
             val trackList = extractTrackList(it)
@@ -22,8 +24,10 @@ class MusixmatchScraper(private val basicHttpRequests: BasicHttpRequests) {
         }
     }
 
-    fun searchTracksByLyrics(query: String, page: Int=1,
-                             listener: ResponseListener<MusixmatchSearch<MusixmatchTrack>>) {
+    fun searchTracksByLyrics(
+        query: String, page: Int = 1,
+        listener: ResponseListener<MusixmatchSearch<MusixmatchTrack>>
+    ) {
         val url = joinUrl(baseUrl, "search", encodeAll(query), "lyrics", page.toString())
         basicHttpRequests.httpGETHtml(url, null, listener) {
             val trackList = extractTrackList(it)
@@ -31,8 +35,10 @@ class MusixmatchScraper(private val basicHttpRequests: BasicHttpRequests) {
         }
     }
 
-    fun getTrackLyrics(musixmatchTrackLink: String,
-                       listener: ResponseListener<MusixmatchLyrics>) {
+    fun getTrackLyrics(
+        musixmatchTrackLink: String,
+        listener: ResponseListener<MusixmatchLyrics>
+    ) {
         val url = joinUrl(baseUrl, musixmatchTrackLink, "embed")
         basicHttpRequests.httpGETHtml(url, null, listener) {
             val lines = ArrayList<String>()
@@ -76,7 +82,7 @@ class MusixmatchScraper(private val basicHttpRequests: BasicHttpRequests) {
         val (filename, ext) = file.splitBtIndex(if (dotIndex != -1) dotIndex else file.length)
         val underscoreIndex = filename.indexOfFirst { it == '_' }
         val img = if (underscoreIndex != -1) filename.substring(0, underscoreIndex)
-                  else filename
+        else filename
 
         return MusixmatchImage(joinUrl(dir, "$img{0}.$ext"))
     }
@@ -84,49 +90,49 @@ class MusixmatchScraper(private val basicHttpRequests: BasicHttpRequests) {
 
 
 data class MusixmatchTrack(
-        val title: String,
-        val artistsNames: List<String>,
-        val hasLyrics: Boolean,
-        val musixmatchTrackLink: String,
-        val coverart: Image?
+    val title: String,
+    val artistsNames: List<String>,
+    val hasLyrics: Boolean,
+    val musixmatchTrackLink: String,
+    val coverart: Image?
 )
 
 data class MusixmatchLyrics(
-        val lines: List<String>
+    val lines: List<String>
 )
 
 data class MusixmatchSearch<T>(
-        val itemList: List<T>,
-        val echoQuery: String,
-        val echoPage: Int
+    val itemList: List<T>,
+    val echoQuery: String,
+    val echoPage: Int
 )
 
-class MusixmatchImage(private val urlTemplate: String): Image {
+class MusixmatchImage(private val urlTemplate: String) : Image {
     private companion object {
         val size2Substitution = listOf(
-                100 to "",
-                350 to "_350_350",
-                500 to "_500_500",
-                800 to "_800_800"
+            100 to "",
+            350 to "_350_350",
+            500 to "_500_500",
+            800 to "_800_800"
         )
     }
 
     override fun sourceByShortSideEquals(pixels: Int, largerIfNotPresent: Boolean): Image.Source {
-        val temp = size2Substitution.binarySearchBy(pixels, selector={ it.first })
+        val temp = size2Substitution.binarySearchBy(pixels, selector = { it.first })
         val index =
-                if (temp >= 0)
-                    temp
-                else {
-                    val insertionIndex = -(temp + 1)
-                    val range = (0 until size2Substitution.size)
-                    if (largerIfNotPresent) insertionIndex.coerceIn(range)
-                    else (insertionIndex - 1).coerceIn(range)
-                }
+            if (temp >= 0)
+                temp
+            else {
+                val insertionIndex = -(temp + 1)
+                val range = (0 until size2Substitution.size)
+                if (largerIfNotPresent) insertionIndex.coerceIn(range)
+                else (insertionIndex - 1).coerceIn(range)
+            }
         val data = size2Substitution[index]
         return Image.Source(
-                urlTemplate.replace("{0}", data.second),
-                data.first,
-                data.first
+            urlTemplate.replace("{0}", data.second),
+            data.first,
+            data.first
         )
     }
 
@@ -137,9 +143,9 @@ class MusixmatchImage(private val urlTemplate: String): Image {
     override fun sourceLargest(): Image.Source {
         val data = size2Substitution.last()
         return Image.Source(
-                urlTemplate.replace("{0}", data.second),
-                data.first,
-                data.first
+            urlTemplate.replace("{0}", data.second),
+            data.first,
+            data.first
         )
     }
 }

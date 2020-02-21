@@ -24,13 +24,17 @@ import com.musichub.util.setColor
 import com.musichub.util.squareCropTop
 
 
-class MediaPlayView: ConstraintLayout {
+class MediaPlayView : ConstraintLayout {
 
-    constructor(context: Context): super(context)
+    constructor(context: Context) : super(context)
 
-    constructor(context: Context, attrs: AttributeSet): super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int): super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
 
 
     private var mediaPlayer: MediaPlayer? = null
@@ -64,14 +68,13 @@ class MediaPlayView: ConstraintLayout {
                 player.playWhenReady = true
                 if (player.playbackState == MediaPlayer.PlaybackState.ENDED)
                     player.changeMedia(0)
-            }
-            else {
+            } else {
                 player.playWhenReady = false
             }
         }
     }
 
-    private val eventListener = object: MediaPlayer.EventListener {
+    private val eventListener = object : MediaPlayer.EventListener {
         override fun onMediaChanged(mediaHolder: MediaHolder?) {
             when (mediaHolder) {
                 is AppleMusicTrackMediaHolder -> initMedia(mediaHolder)
@@ -79,7 +82,10 @@ class MediaPlayView: ConstraintLayout {
             }
         }
 
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: MediaPlayer.PlaybackState) {
+        override fun onPlayerStateChanged(
+            playWhenReady: Boolean,
+            playbackState: MediaPlayer.PlaybackState
+        ) {
             if (!playWhenReady || playbackState == MediaPlayer.PlaybackState.ENDED)
                 imageViewPlay.setImageResource(R.drawable.ic_media_play)
             else
@@ -88,7 +94,8 @@ class MediaPlayView: ConstraintLayout {
     }
 
     private val imageSize = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, 55f, context.resources.displayMetrics).toInt()
+        TypedValue.COMPLEX_UNIT_DIP, 55f, context.resources.displayMetrics
+    ).toInt()
 
     private fun initMedia(appleMusicTrackMediaHolder: AppleMusicTrackMediaHolder) {
         val track = appleMusicTrackMediaHolder.appleMusicTrack
@@ -97,12 +104,16 @@ class MediaPlayView: ConstraintLayout {
         val colorSecondary = ContextCompat.getColor(context, R.color.contentColorSecondary)
         val text = SpannableStringBuilder()
             .append(SpannableString(track.title).setColor(colorPrimary))
-            .append(SpannableString(" ${SpecialCharacters.smblkcircle} ${track.artistName}").setColor(colorSecondary))
+            .append(
+                SpannableString(" ${SpecialCharacters.smblkcircle} ${track.artistName}").setColor(
+                    colorSecondary
+                )
+            )
         textViewTitle.setText(text, TextView.BufferType.SPANNABLE)
 
         val imageUrl = track.coverart?.sourceByShortSideEquals(imageSize)?.url
         if (imageUrl != null)
-            Singleton.imageRequests.getImage(imageUrl, object: ResponseListener<Bitmap> {
+            Singleton.imageRequests.getImage(imageUrl, object : ResponseListener<Bitmap> {
                 override fun onResponse(response: Bitmap) {
                     imageViewCoverart.setImageBitmap(response.squareCropTop())
                 }

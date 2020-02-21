@@ -12,20 +12,26 @@ import java.net.URL
 import java.util.concurrent.Executors
 
 
-class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
+class HttpUrlClient(numThreads: Int = 4) : BasicHttpRequests {
     private val executor = Executors.newFixedThreadPool(numThreads)
 
-    private abstract class HttpRequestTask: Runnable, Cancellable {
+    private abstract class HttpRequestTask : Runnable, Cancellable {
         protected var cancelled: Boolean = false
             get() = synchronized(field) { field }
             set(value) = synchronized(field) { field = value }
 
-        override fun cancel() { cancelled = true }
+        override fun cancel() {
+            cancelled = true
+        }
 
-        override fun isCancelled(): Boolean { return cancelled }
+        override fun isCancelled(): Boolean {
+            return cancelled
+        }
 
-        protected fun requestGetConnection(url: String, headers: Map<String, String>?, method: String,
-                                         checkResponseCode: Boolean=true): HttpURLConnection {
+        protected fun requestGetConnection(
+            url: String, headers: Map<String, String>?, method: String,
+            checkResponseCode: Boolean = true
+        ): HttpURLConnection {
             val con = URL(url).openConnection() as HttpURLConnection
             con.requestMethod = method
             if (headers != null) {
@@ -58,7 +64,7 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
             get() {
                 val contentType = this.contentType
                 if (contentType != null) {
-                    for (field in contentType.split(';',',')) {
+                    for (field in contentType.split(';', ',')) {
                         if ("charset" in field) {
                             val tokens = field.split('=')
                             return tokens[1]
@@ -69,9 +75,11 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
             }
     }
 
-    override fun <T> httpGETString(url: String, headers: Map<String, String>?,
-                                listener: ResponseListener<T>, converter: (String)->T): Cancellable {
-        val task = object: HttpRequestTask() {
+    override fun <T> httpGETString(
+        url: String, headers: Map<String, String>?,
+        listener: ResponseListener<T>, converter: (String) -> T
+    ): Cancellable {
+        val task = object : HttpRequestTask() {
             override fun run() {
                 try {
                     val con = requestGetConnection(url, headers, "GET")
@@ -79,8 +87,7 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
                     val responseT = converter(responseStr)
                     if (!cancelled)
                         listener.onResponse(responseT)
-                }
-                catch (e: Exception) {
+                } catch (e: Exception) {
                     if (!cancelled)
                         listener.onError(e)
                 }
@@ -90,9 +97,11 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
         return task
     }
 
-    override fun <T> httpGETJson(url: String, headers: Map<String, String>?,
-                                 listener: ResponseListener<T>, converter: (JSONObject)->T): Cancellable {
-        val task = object: HttpRequestTask() {
+    override fun <T> httpGETJson(
+        url: String, headers: Map<String, String>?,
+        listener: ResponseListener<T>, converter: (JSONObject) -> T
+    ): Cancellable {
+        val task = object : HttpRequestTask() {
             override fun run() {
                 try {
                     val con = requestGetConnection(url, headers, "GET")
@@ -101,8 +110,7 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
                     val responseT = converter(responseJson)
                     if (!cancelled)
                         listener.onResponse(responseT)
-                }
-                catch (e: Exception) {
+                } catch (e: Exception) {
                     if (!cancelled)
                         listener.onError(e)
                 }
@@ -112,18 +120,20 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
         return task
     }
 
-    override fun <T> httpGETHtml(url: String, headers: Map<String, String>?,
-                                 listener: ResponseListener<T>, converter: (Document)->T): Cancellable {
-        val task = object: HttpRequestTask() {
+    override fun <T> httpGETHtml(
+        url: String, headers: Map<String, String>?,
+        listener: ResponseListener<T>, converter: (Document) -> T
+    ): Cancellable {
+        val task = object : HttpRequestTask() {
             override fun run() {
                 try {
                     val con = requestGetConnection(url, headers, "GET")
-                    val responseHtml = Jsoup.parse(con.inputStream, con.contentCharset, UrlParse.parseBaseUrl(url))
+                    val responseHtml =
+                        Jsoup.parse(con.inputStream, con.contentCharset, UrlParse.parseBaseUrl(url))
                     val responseT = converter(responseHtml)
                     if (!cancelled)
                         listener.onResponse(responseT)
-                }
-                catch (e: Exception) {
+                } catch (e: Exception) {
                     if (!cancelled)
                         listener.onError(e)
                 }
@@ -133,9 +143,11 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
         return task
     }
 
-    override fun <T> httpPOSTJson(url: String, headers: Map<String, String>?, data: ByteArray?,
-                                  listener: ResponseListener<T>, converter: (JSONObject)->T): Cancellable {
-        val task = object: HttpRequestTask() {
+    override fun <T> httpPOSTJson(
+        url: String, headers: Map<String, String>?, data: ByteArray?,
+        listener: ResponseListener<T>, converter: (JSONObject) -> T
+    ): Cancellable {
+        val task = object : HttpRequestTask() {
             override fun run() {
                 try {
                     val con = requestGetConnection(url, headers, "POST", false)
@@ -151,8 +163,7 @@ class HttpUrlClient(numThreads: Int=4): BasicHttpRequests {
                     val responseT = converter(responseJson)
                     if (!cancelled)
                         listener.onResponse(responseT)
-                }
-                catch (e: Exception) {
+                } catch (e: Exception) {
                     if (!cancelled)
                         listener.onError(e)
                 }
