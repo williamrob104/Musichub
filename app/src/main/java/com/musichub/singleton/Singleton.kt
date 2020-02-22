@@ -12,7 +12,6 @@ import com.musichub.networking.BasicHttpRequests
 import com.musichub.networking.ImageRequests
 import com.musichub.networking.VolleyWrapper
 import com.musichub.scraper.AppleMusicScraper
-import com.musichub.scraper.YoutubeDownloader
 import com.musichub.scraper.YoutubeScraper
 import java.io.File
 import java.util.concurrent.Executors
@@ -39,9 +38,6 @@ object Singleton {
     lateinit var appleMusicScraper: AppleMusicScraper
         private set
 
-    lateinit var youtubeDownloader: YoutubeDownloader
-        private set
-
     lateinit var youtubeScraper: YoutubeScraper
         private set
 
@@ -64,9 +60,8 @@ object Singleton {
             callbackExecutor = CallbackExecutor(executorService, handler)
 
             imageRequests = ImageRequests(requestQueue, context, IMAGE_CACHE_SIZE)
-            appleMusicScraper = AppleMusicScraper(volleyWrapper, callbackExecutor, locale)
-            youtubeDownloader = YoutubeDownloader(volleyWrapper, callbackExecutor)
-            youtubeScraper = YoutubeScraper(volleyWrapper, callbackExecutor)
+            appleMusicScraper = AppleMusicScraper(basicHttpRequests, callbackExecutor, locale)
+            youtubeScraper = YoutubeScraper(basicHttpRequests, callbackExecutor)
 
             initialized = true
         }

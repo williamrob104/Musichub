@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity(), MainActivityAction {
         when (intent?.action) {
             Intent.ACTION_SEND -> {
                 val text = intent.getStringExtra(Intent.EXTRA_TEXT) ?: return
-                val videoId = YoutubeScraper.parseYoutubeUrl(text)
+                val videoId = Singleton.youtubeScraper.parseYoutubeUrl(text)
                 if (videoId == null) {
                     Toast.makeText(
                         this,

@@ -112,7 +112,7 @@ class YoutubeVideoMediaHolder(val youtubeVideoId: String) : MediaHolder() {
 
     override fun getMediaSource(): MediaSource {
         return lookupProgressiveMediaSourceFactory.createMediaSource {
-            return@createMediaSource Singleton.youtubeDownloader.getVideoStreams(
+            return@createMediaSource Singleton.youtubeScraper.getVideoStreams(
                 youtubeVideoId,
                 pipeResponse(it) { response ->
                     val stream = response.streamList.maxBy { s -> s.audioFormat?.bitRate ?: 0 }
@@ -145,7 +145,7 @@ private fun trackMatchingVideoStreams(
 
             val streamsFuture = RequestFuture<YoutubeVideoStreams>()
             cancellable2 =
-                Singleton.youtubeDownloader.getVideoStreams(video.youtubeVideoId, streamsFuture)
+                Singleton.youtubeScraper.getVideoStreams(video.youtubeVideoId, streamsFuture)
             val streams = streamsFuture.get(20, TimeUnit.SECONDS)
 
             streams

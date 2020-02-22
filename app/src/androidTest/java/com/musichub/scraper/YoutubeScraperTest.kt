@@ -3,6 +3,7 @@ package com.musichub.scraper
 import androidx.test.platform.app.InstrumentationRegistry
 import com.musichub.concurrent.RequestFuture
 import com.musichub.singleton.Singleton
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -34,7 +35,7 @@ class YoutubeScraperTest {
 
         val video = searchResult.itemList[0]
         assertEquals(video.youtubeVideoId, myYoutubeVideoId)
-        assertTrue(video.viewCount > myNumViews)
+        assertTrue(video.viewCount ?: 0 > myNumViews)
         assertTrue(hasConnection(video.thumbnail.sourceLargest().url))
         println(video.descriptionPreview)
 
@@ -56,6 +57,61 @@ class YoutubeScraperTest {
             assert(video.youtubeVideoId !in idSet)
             idSet.add(video.youtubeVideoId)
             assertTrue(hasConnection(video.thumbnail.sourceLargest().url))
+        }
+    }
+
+    @Test
+    fun testGetVideoStreams_normal() {
+        checkYoutubeStreams("KYniUCGPGLs")
+    }
+
+    @Test
+    fun testGetVideoStreams_copyrighted() {
+        checkYoutubeStreams("JGwWNGJdvx8")
+        checkYoutubeStreams("RgKAFK5djSk")
+    }
+
+    @Test
+    fun testGetVideoStreams_ageRestricted() {
+        checkYoutubeStreams("M-JdRsHr7Bs")
+    }
+
+    @Test
+    fun testGetVideoStreams_notAvailable() {
+        try {
+            checkYoutubeStreams("aXBL6j0XS1s")
+            checkYoutubeStreams("EzFIWyXuMmU")
+            checkYoutubeStreams("EzFIWyXuMm")
+            Assert.assertTrue(false)
+        } catch (e: Exception) {
+            Assert.assertTrue("available" in e.message!!)
+        }
+    }
+
+    @Test
+    fun testGetVideoStreams_liveNotSupported() {
+        try {
+            checkYoutubeStreams("JeSMx7Z0aUQ")
+            Assert.assertTrue(false)
+        } catch (e: Exception) {
+            Assert.assertTrue("live" in e.message!!)
+        }
+    }
+
+    private fun checkYoutubeStreams(youtubeVideoId: String) {
+        val future = RequestFuture<YoutubeVideoStreams>()
+        youtubeScraper.getVideoStreams(youtubeVideoId, future)
+        val videoStreams = future.get(30, TimeUnit.SECONDS)
+
+        Assert.assertTrue(videoStreams.streamList.isNotEmpty())
+        Assert.assertEquals(videoStreams.echoYoutubeVideoId, youtubeVideoId)
+
+        val itagSet = HashSet<Int>()
+        for (stream in videoStreams.streamList) {
+            Assert.assertTrue(hasConnection(stream.url))
+            Assert.assertTrue(stream.itag !in itagSet)
+            itagSet.add(stream.itag)
+            Assert.assertTrue(stream.audioFormat != null || stream.videoFormat != null)
         }
     }
 

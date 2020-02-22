@@ -11,6 +11,7 @@ import com.musichub.R
 import com.musichub.networking.UrlParse
 import com.musichub.playback.YoutubeVideoMediaHolder
 import com.musichub.scraper.YoutubeScraper
+import com.musichub.singleton.Singleton
 
 
 class SearchYoutubeFragment : SearchTargetFragment(), FragmentActions {
@@ -41,7 +42,7 @@ class SearchYoutubeFragment : SearchTargetFragment(), FragmentActions {
             override fun onPageFinished(view: WebView?, url: String?) {
                 //val tag = "ytm-pivot-bar-renderer"
                 if (url != null) {
-                    val videoId = YoutubeScraper.parseYoutubeUrl(url)
+                    val videoId = Singleton.youtubeScraper.parseYoutubeUrl(url)
                     if (videoId != null) {
                         mainActivityAction.playMedia(YoutubeVideoMediaHolder(videoId), null)
                         view?.goBack()
