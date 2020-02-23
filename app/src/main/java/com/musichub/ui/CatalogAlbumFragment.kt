@@ -27,7 +27,6 @@ import com.musichub.scraper.AppleMusicTrack
 import com.musichub.singleton.Singleton
 import com.musichub.ui.widget.RoundedTouchFadeTextView
 import com.musichub.util.SpecialCharacters
-import com.musichub.util.formatDate
 
 
 class CatalogAlbumFragment : Fragment() {
@@ -148,7 +147,7 @@ class CatalogAlbumFragment : Fragment() {
         textViewLabel.text =
             "${album.releaseDate.year} ${SpecialCharacters.smblkcircle} ${album.artistName}"
 
-        val trackList = album.songList
+        val trackList = album.trackList
         if (trackList.isEmpty())
             return
 
@@ -204,7 +203,7 @@ class CatalogAlbumFragment : Fragment() {
         ).toInt()
 
         val textViewDate = TextView(context).apply {
-            text = formatDate(resources, album.releaseDate)
+            text = album.releaseDate.format(Singleton.locale, resources)
             setTextSize(
                 TypedValue.COMPLEX_UNIT_PX,
                 resources.getDimension(R.dimen.content_medium_text_size)

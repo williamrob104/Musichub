@@ -311,7 +311,7 @@ class AppleMusicAlbum(
     val albumViewUrl: String,
     val coverart: Image?,
     val trackCount: Int,
-    val releaseDate: Date,
+    val releaseDate: ApproxDate,
     val explicit: Boolean,
     val primaryGenre: String?,
     val artistName: String,
@@ -332,7 +332,7 @@ class AppleMusicSong(
     val songId: Long,
     val songNumber: Int,
     override val length: Int,
-    val releaseDate: Date,
+    val releaseDate: ApproxDate,
     val explicit: Boolean,
     val primaryGenre: String?,
     override val artistName: String,
@@ -360,7 +360,7 @@ class AppleMusicMV(
     override val title: String,
     val mvId: Long,
     override val length: Int,
-    val releaseDate: Date,
+    val releaseDate: ApproxDate,
     val explicit: Boolean,
     override val coverart: Image?,
     override val artistName: String,
@@ -390,7 +390,7 @@ class AppleMusicArtistBrowse(
     val artistViewUrl: String,
     val artistId: Long,
     val bio: String?,
-    val bornOrFormedDate: Date?,
+    val bornOrFormedDate: ApproxDate?,
     val origin: String?,
     val avatar: Image?,
     val primaryGenre: String?,
@@ -411,7 +411,7 @@ class AppleMusicPlaylistBrowse(
     val playlistId: String,
     val playlistViewUrl: String,
     val trackCount: Int,
-    val lastModifiedDate: Date,
+    val lastModifiedDate: ApproxDate,
     val descriptionStandard: String?,
     val descriptionShort: String?,
     val coverart: Image?,
@@ -425,11 +425,11 @@ class AppleMusicAlbumBrowse(
     val artistName: String,
     val artistViewUrl: String,
     val songCount: Int,
-    val releaseDate: Date,
+    val releaseDate: ApproxDate,
     val noteStandard: String?,
     val noteShort: String?,
     val coverart: Image?,
-    val songList: List<AppleMusicSong2>
+    val trackList: List<AppleMusicTrack>
 )
 
 class AppleMusicImage(
@@ -509,7 +509,7 @@ class AppleMusicAlbum2(
     val albumViewUrl: String,
     val artistName: String,
     val trackCount: Int,
-    val releaseDate: Date,
+    val releaseDate: ApproxDate,
     _coverartId: String?
 ) : PostProcess {
     private var coverartId = _coverartId
@@ -626,7 +626,7 @@ class AppleMusicMV2(
 class AppleMusicPlaylist2(
     val title: String,
     val playlistViewUrl: String,
-    val lastModifiedDate: Date,
+    val lastModifiedDate: ApproxDate,
     _coverartId: String?
 ) : PostProcess {
     private var coverartId = _coverartId
@@ -687,7 +687,7 @@ class AppleMusicSong3(
     override val artistId: Long,
     override val artistViewUrl: String,
     override val albumTitle: String,
-    val releaseDate: Date,
+    val releaseDate: ApproxDate,
     override val coverart: Image?,
     override val length: Int,
     val songNumber: Int,
@@ -710,7 +710,7 @@ class AppleMusicMV3(
     override val artistName: String,
     override val artistId: Long,
     override val artistViewUrl: String,
-    val releaseDate: Date,
+    val releaseDate: ApproxDate,
     override val coverart: Image?,
     override val length: Int,
     val popularity: Double
@@ -735,7 +735,7 @@ class AppleMusicAlbum3(
     val artistId: Long,
     val artistViewUrl: String,
     val trackCount: Int,
-    val releaseDate: Date,
+    val releaseDate: ApproxDate,
     val coverart: Image?,
     val popularity: Double
 ) {
@@ -752,7 +752,7 @@ class AppleMusicPlaylist3(
     val title: String,
     val playlistId: String,
     val playlistViewUrl: String,
-    val lastModifiedDate: Date,
+    val lastModifiedDate: ApproxDate,
     val descriptionStandard: String?,
     val descriptionShort: String?
 )
@@ -929,13 +929,13 @@ private object AppleMusicExtractor {
         val resources =
             extractAppleMusicResourceMap(json.getJSONArray("included"), artistViewUrl, albumTitle)
 
-        val songsJsonArr = data.getJSONObject("relationships")
+        val tracksJsonArr = data.getJSONObject("relationships")
             .getJSONObject("songs").getJSONArray("data")
-        val songList = ArrayList<AppleMusicSong2>()
-        for (i in 0 until songsJsonArr.length()) {
-            val songJson = songsJsonArr.getJSONObject(i)
-            val id = songJson.getString("id")
-            songList.add(resources[id] as AppleMusicSong2)
+        val trackList = ArrayList<AppleMusicTrack>()
+        for (i in 0 until tracksJsonArr.length()) {
+            val trackJson = tracksJsonArr.getJSONObject(i)
+            val id = trackJson.getString("id")
+            trackList.add(resources[id] as AppleMusicTrack)
         }
 
         val coverartId = data.getJSONObject("relationships").optJSONObject("artwork")
@@ -952,7 +952,7 @@ private object AppleMusicExtractor {
             attr.optJSONObject("itunesNotes")?.getStringOrNull("standard")?.let { unescapeHtml(it) },
             attr.optJSONObject("itunesNotes")?.getStringOrNull("short")?.let { unescapeHtml(it) },
             if (coverartId == null) null else (resources[coverartId] as Image),
-            songList
+            trackList
         )
     }
 
@@ -1247,14 +1247,14 @@ private object AppleMusicExtractor {
         return AppleMusicImage(urlTemplate)
     }
 
-    private fun parseDate(_dateStr: String): Date {
+    private fun parseDate(_dateStr: String): ApproxDate {
         // 2015-11-05T12:00:00Z
         // 2015
         val index = _dateStr.indexOf('T')
         val dateStr = if (index == -1) _dateStr
         else _dateStr.substring(0, index)
         val tokens = dateStr.split('-', limit = 3)
-        return Date(
+        return ApproxDate(
             tokens[0].toInt(),
             if (tokens.size >= 2) tokens[1].toInt() else null,
             if (tokens.size >= 3) tokens[2].toInt() else null

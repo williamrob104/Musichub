@@ -112,7 +112,7 @@ class SearchFragment : Fragment(), FragmentActions {
 
         searchView.setOnQueryTextListener(onQueryTextListener)
 
-        Handler(context?.mainLooper).post {
+        Handler(context!!.mainLooper).post {
             val queryText = searchView.query.toString()
             currentSearchTargetFragment.onPageChange(queryText)
         }

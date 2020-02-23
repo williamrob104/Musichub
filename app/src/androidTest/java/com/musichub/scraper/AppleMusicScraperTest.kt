@@ -8,10 +8,11 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 private val appleMusicScraper = Singleton
-    .apply { initialize(InstrumentationRegistry.getInstrumentation().targetContext) }
+    .apply { initialize(InstrumentationRegistry.getInstrumentation().targetContext, Locale.TAIWAN) }
     .appleMusicScraper
 
 private var myArtistBrowse: AppleMusicArtistBrowse? = null
@@ -131,7 +132,7 @@ class AppleMusicScraperTest {
         appleMusicScraper.browseAlbum(myAlbumViewUrl, future)
         val album = future.defaultGet()
 
-        assertEquals(album.songList.size, album.songCount)
+        assertEquals(album.trackList.size, album.songCount)
 
         //val gson = GsonBuilder().serializeNulls().setPrettyPrinting().create()
         //println(gson.toJson(album))

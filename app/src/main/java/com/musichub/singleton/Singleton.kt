@@ -14,6 +14,7 @@ import com.musichub.networking.VolleyWrapper
 import com.musichub.scraper.AppleMusicScraper
 import com.musichub.scraper.YoutubeScraper
 import java.io.File
+import java.util.*
 import java.util.concurrent.Executors
 
 
@@ -24,12 +25,15 @@ object Singleton {
 
     private var initialized = false
 
+    lateinit var locale: Locale
+        private set
+
     private lateinit var volleyWrapper: VolleyWrapper
 
     lateinit var callbackExecutor: CallbackExecutor
         private set
 
-    internal val basicHttpRequests: BasicHttpRequests
+    val basicHttpRequests: BasicHttpRequests
         get() = volleyWrapper
 
     lateinit var imageRequests: ImageRequests
@@ -41,9 +45,10 @@ object Singleton {
     lateinit var youtubeScraper: YoutubeScraper
         private set
 
-    fun initialize(context: Context) = synchronized(initialized) {
-        if (!initialized) {
-            val locale = ConfigurationCompat.getLocales(context.resources.configuration)[0]
+    fun initialize(context: Context, forceLocale: Locale?=null) = synchronized(initialized) {
+        if (!initialized || (forceLocale != null && forceLocale != locale)) {
+            locale = forceLocale ?:
+                    ConfigurationCompat.getLocales(context.resources.configuration)[0]
 
             val cacheDir = File(context.cacheDir, NETWORK_CACHE_DIR)
             val cache = DiskBasedCache(cacheDir, NETWORK_CACHE_SIZE)

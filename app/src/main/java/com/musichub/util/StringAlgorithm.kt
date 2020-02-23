@@ -1,19 +1,12 @@
 package com.musichub.util
 
+import kotlin.math.min
 import kotlin.math.max
 
 
-private val capitalRange = "A".toInt().."Z".toInt()
-private val offset = "A".toInt() - "a".toInt()
-internal fun sameEnglishLetter(codePoint1: Int, codePoint2: Int): Boolean {
-    return (if (codePoint1 in capitalRange) codePoint1 - offset else codePoint1) ==
-            (if (codePoint2 in capitalRange) codePoint2 - offset else codePoint2)
-}
-
-internal inline fun longestCommonSubsequence(
+internal fun longestCommonSubsequence(
     str1: String,
-    str2: String,
-    matchFunc: (Int, Int) -> Boolean = ::sameEnglishLetter
+    str2: String
 ): Int {
     val seq1 = str1.codePointsCompat()
     val seq2 = str2.codePointsCompat()
@@ -25,7 +18,7 @@ internal inline fun longestCommonSubsequence(
         val prev = (i - 1) % 2
         dyn[curr][0] = 0
         for (j in 1..s2.size) {
-            if (matchFunc(s1[i - 1], s2[j - 1]))
+            if (s1[i - 1] == s2[j - 1])
                 dyn[curr][j] = dyn[prev][j - 1] + 1
             else
                 dyn[curr][j] = max(dyn[prev][j], dyn[curr][j - 1])
@@ -34,10 +27,9 @@ internal inline fun longestCommonSubsequence(
     return dyn[s1.size % 2][s2.size]
 }
 
-internal inline fun longestCommonSubstring(
+internal fun longestCommonSubstring(
     str1: String,
-    str2: String,
-    matchFunc: (Int, Int) -> Boolean = ::sameEnglishLetter
+    str2: String
 ): Int {
     val seq1 = str1.codePointsCompat()
     val seq2 = str2.codePointsCompat()
@@ -50,7 +42,7 @@ internal inline fun longestCommonSubstring(
         val prev = (i - 1) % 2
         dyn[curr][0] = 0
         for (j in 1..s2.size) {
-            if (matchFunc(s1[i - 1], s2[j - 1])) {
+            if (s1[i - 1] == s2[j - 1]) {
                 dyn[curr][j] = dyn[prev][j - 1] + 1
                 result = max(result, dyn[curr][j])
             } else
@@ -60,8 +52,8 @@ internal inline fun longestCommonSubstring(
     return result
 }
 
-internal inline fun editDistance(
-    str1: String, str2: String, matchFunc: (Int, Int) -> Boolean = ::sameEnglishLetter,
+internal fun editDistance(
+    str1: String, str2: String,
     insertOrDeleteCost: Int = 1, substituteCost: Int = 1
 ): Int {
     val seq1 = str1.codePointsCompat()
@@ -77,7 +69,7 @@ internal inline fun editDistance(
         val prev = (i - 1) % 2
         dyn[curr][0] = i
         for (j in 1..s2.size) {
-            if (matchFunc(s1[i - 1], s2[j - 1])) {
+            if (s1[i - 1] == s2[j - 1]) {
                 dyn[curr][j] = dyn[prev][j - 1]
             } else {
                 dyn[curr][j] = arrayOf(

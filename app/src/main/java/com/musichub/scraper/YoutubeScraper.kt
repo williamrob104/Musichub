@@ -191,8 +191,6 @@ class YoutubeScraper(
     private fun extractStreams(youtubeVideoId: String, watchHtml: String): List<YoutubeStream> {
         if ("og:title" !in watchHtml)
             throw RuntimeException("video not available")
-        if ("liveStreamability" in watchHtml)
-            throw RuntimeException("live stream not supported")
         val ageRestricted = "og:restrictions:age" in watchHtml
         var jsUrl: String? = null
 

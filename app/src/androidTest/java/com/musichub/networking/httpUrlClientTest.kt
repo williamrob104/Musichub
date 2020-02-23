@@ -49,18 +49,14 @@ class VolleyWrapperTest {
 
     @Test
     fun testHttpGETHtml() {
-        val url = "http://help.websiteos.com/websiteos/example_of_a_simple_html_page.htm"
+        val url = "https://www.google.com/"
         val header = mapOf("User-Agent" to "HttpURLClient")
         val future = RequestFuture<Document>()
 
         basicHttpRequests.httpGETHtml(url, header, future) { it }
 
         val responseHtml = future.get(10, TimeUnit.SECONDS)
-        assertEquals(responseHtml.title(), "Example of a simple HTML page")
-        assertEquals(
-            responseHtml.body().getElementsByTag("h1").text(),
-            "Example of a simple HTML page"
-        )
+        assertEquals(responseHtml.title(), "Google")
     }
 
     @Test
