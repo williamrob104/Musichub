@@ -56,15 +56,13 @@ object Singleton {
             val requestQueue = RequestQueue(cache, network).apply {
                 start()
             }
+            volleyWrapper = VolleyWrapper(requestQueue)
+            imageRequests = ImageRequests(requestQueue, context, IMAGE_CACHE_SIZE)
 
             val executorService = Executors.newFixedThreadPool(4)
-
             val handler = Handler(context.mainLooper)
-
-            volleyWrapper = VolleyWrapper(requestQueue)
             callbackExecutor = CallbackExecutor(executorService, handler)
 
-            imageRequests = ImageRequests(requestQueue, context, IMAGE_CACHE_SIZE)
             appleMusicScraper = AppleMusicScraper(basicHttpRequests, callbackExecutor, locale)
             youtubeScraper = YoutubeScraper(basicHttpRequests, callbackExecutor)
 

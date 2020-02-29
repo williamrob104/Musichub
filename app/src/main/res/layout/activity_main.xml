@@ -19,14 +19,14 @@
             android:layout_height="55dp"
             android:layout_above="@id/activity_main_bnv_navigate"
             android:layout_marginBottom="2dp"
-            android:background="@color/contentBgColorDark" />
+            android:background="@color/bottomBarColor" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/activity_main_bnv_navigate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/contentBgColorDark"
+            android:background="@color/bottomBarColor"
             app:itemIconTint="@color/content_checkable_color"
             app:itemTextColor="@color/content_checkable_color"
             app:menu="@menu/activity_main" />

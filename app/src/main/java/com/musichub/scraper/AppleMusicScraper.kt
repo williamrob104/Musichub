@@ -679,7 +679,6 @@ class AppleMusicPlaylistItem2(
     }
 }
 
-
 class AppleMusicSong3(
     override val title: String,
     val songId: Long,

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#202020</color>
-    <color name="colorPrimaryDark">#111111</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="windowBackground">#111111</color>
+    <color name="colorPrimary">#121212</color>
+    <color name="colorPrimaryDark">#121212</color>
+    <color name="colorAccent">#ffffff</color>
+    <color name="windowBackground">#121212</color>
 
-
-    <color name="contentColorPrimary">#E0E0E0</color>
-    <color name="contentColorSecondary">#A0A0A0</color>
-    <color name="contentBgColorLight">#1DB954</color>
-    <color name="contentBgColorDark">#202020</color>
+    <color name="contentColorPrimary">#ffffff</color>
+    <color name="contentColorSecondary">#aeafb3</color>
+    <color name="contentBgColorLight">#1cb952</color>
+    <color name="contentBgColorDark">#282828</color>
+    <color name="bottomBarColor">#222325</color>
 </resources>

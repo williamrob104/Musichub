@@ -34,7 +34,9 @@ class RequestFuture<T> : ResponseListener<T>, Future<T> {
         return false
     }
 
-    @Deprecated("This method may block the thread forever!")
+    @Deprecated("This method may block the thread forever!",
+        ReplaceWith("get(long, TimeUnit)"),
+        DeprecationLevel.WARNING)
     override fun get(): T {
         return doGet(null)
     }

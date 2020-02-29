@@ -21,13 +21,13 @@ class TestOnComputer {
 
     @Test
     fun main() {
+        val idCopyright = "RgKAFK5djSk"
         val idLive = "RaIJ767Bj_M"
+        val idPseudoLive = "gwMa6gpoE9I"
 
         val future = RequestFuture<YoutubeVideoStreams>()
-        youtubeScraper.getVideoStreams(idLive, future)
+        youtubeScraper.getVideoStreams(idCopyright, future)
 
         val streams = future.get().streamList
-
-        streams.forEach { println(it.url) }
     }
 }

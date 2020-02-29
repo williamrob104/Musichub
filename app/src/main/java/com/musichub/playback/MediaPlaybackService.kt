@@ -121,13 +121,6 @@ class MediaPlaybackService : Service(), MediaPlayer {
         }
     }
 
-    private val noisyReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            player.playWhenReady = false
-        }
-    }
-
-
     override fun onCreate() {
         super.onCreate()
         val context: Context = this
@@ -137,9 +130,11 @@ class MediaPlaybackService : Service(), MediaPlayer {
 
         val rendersFactory =
             DefaultRenderersFactory(context).setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON)
-        val trackSelector = DefaultTrackSelector()
-        player = ExoPlayerFactory.newSimpleInstance(context, rendersFactory, trackSelector)
+        player = SimpleExoPlayer.Builder(context, rendersFactory).build()
+        player.setHandleWakeLock(true)
+        player.setHandleAudioBecomingNoisy(true)
         player.addListener(eventListener)
+
         cachePlaybackState = mapPlaybackState(player.playbackState)
         cachePlayWhenReady = player.playWhenReady
         cacheRepeatMode = mapRepeatMode(player.repeatMode)
@@ -223,8 +218,6 @@ class MediaPlaybackService : Service(), MediaPlayer {
             .build()
         player.setAudioAttributes(audioAttributes, true)
 
-        registerReceiver(noisyReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
-
         mediaSession = MediaSessionCompat(context, MEDIA_SESSION_TAG)
         mediaSession.isActive = true
         playerNotificationManager.setMediaSessionToken(mediaSession.sessionToken)
@@ -252,7 +245,6 @@ class MediaPlaybackService : Service(), MediaPlayer {
         player.removeListener(eventListener)
         player.release()
         playerNotificationManager.setPlayer(null)
-        unregisterReceiver(noisyReceiver)
         mediaSession.release()
         mediaSessionConnector.setPlayer(null)
     }

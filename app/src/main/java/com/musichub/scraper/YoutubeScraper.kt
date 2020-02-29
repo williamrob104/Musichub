@@ -178,17 +178,17 @@ class YoutubeScraper(
         listener: ResponseListener<YoutubeVideoStreams>
     ): Cancellable {
         return callbackExecutor.executeCallback(listener) {
-            val params = mapOf("v" to youtubeVideoId, desktopParam)
-            val watchUrl =
-                UrlParse.joinUrl(baseUrl, "watch", params = UrlParse.encodeParams(params))
-            val watchHtml = basicHttpRequests.get(watchUrl)
-
-            val streamList = extractStreams(youtubeVideoId, watchHtml)
+            val streamList = extractStreams(youtubeVideoId)
             YoutubeVideoStreams(streamList, youtubeVideoId)
         }
     }
 
-    private fun extractStreams(youtubeVideoId: String, watchHtml: String): List<YoutubeStream> {
+    private fun extractStreams(youtubeVideoId: String): List<YoutubeStream> {
+        val params = mapOf("v" to youtubeVideoId, desktopParam)
+        val watchUrl =
+            UrlParse.joinUrl(baseUrl, "watch", params = UrlParse.encodeParams(params))
+        val watchHtml = basicHttpRequests.get(watchUrl)
+
         if ("og:title" !in watchHtml)
             throw RuntimeException("video not available")
         val ageRestricted = "og:restrictions:age" in watchHtml
@@ -209,6 +209,14 @@ class YoutubeScraper(
         }
         val playerResponse = JSONObject(playerResponseJson)
         val streamingData = playerResponse.getJSONObject("streamingData")
+
+        val captionTracks = if (playerResponse.has("captions"))
+            playerResponse
+                .getJSONObject("captions")
+                .getJSONObject("playerCaptionsTracklistRenderer")
+                .getJSONArray("captionTracks")
+        else
+            null
 
         val streams = ArrayList<JSONObject>()
         for (arg in listOf("formats", "adaptiveFormats")) {
@@ -279,6 +287,7 @@ class YoutubeScraper(
                 else -> 2
             }
         }
+        // e.g.  {"D3"=0, "M6"=1, "ki"=2}
 
         return fun(encryptedSig: String): String {
             val sb = StringBuilder(encryptedSig)
@@ -503,173 +512,173 @@ class YoutubeScraper(
         // DASH MP4 video
         133 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 240), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         134 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 360), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         135 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 480), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         136 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 720), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         137 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 1080), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         138 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 2160), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         160 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 144), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         212 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 480), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         298 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 720, 60), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         299 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 1080, 60), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         264 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 1440), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         266 to YoutubeStream(
             Container.MP4, VideoFormat(VideoCodec.H264, 2160), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
 
         // DASH MP4 audio
         139 to YoutubeStream(
             Container.M4A, null, AudioFormat(AudioCodec.AAC, 48),
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         140 to YoutubeStream(
             Container.M4A, null, AudioFormat(AudioCodec.AAC, 128),
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         141 to YoutubeStream(
             Container.M4A, null, AudioFormat(AudioCodec.AAC, 256),
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
 
         // DASH WebM video
         167 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP8, 360), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         168 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP8, 480), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         169 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP8, 720), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         170 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP8, 1080), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         218 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP8, 480), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         219 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP8, 480), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         278 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 144), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         242 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 240), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         243 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 360), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         244 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 480), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         245 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 480), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         246 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 480), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         247 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 720), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         248 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 1080), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         271 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 1440), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         272 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 2160), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         302 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 720, 60), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         303 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 1080, 60), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         308 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 1440, 60), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         313 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 2160), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         315 to YoutubeStream(
             Container.WebM, VideoFormat(VideoCodec.VP9, 2160, 60), null,
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
 
         // DASH WebM audio
         171 to YoutubeStream(
             Container.WebM, null, AudioFormat(AudioCodec.Vorbis, 128),
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         172 to YoutubeStream(
             Container.WebM, null, AudioFormat(AudioCodec.Vorbis, 256),
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         249 to YoutubeStream(
             Container.WebM, null, AudioFormat(AudioCodec.Opus, 50),
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         250 to YoutubeStream(
             Container.WebM, null, AudioFormat(AudioCodec.Opus, 70),
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         ),
         251 to YoutubeStream(
             Container.WebM, null, AudioFormat(AudioCodec.Opus, 160),
-            StreamProtocol.DASH
+            StreamProtocol.Adaptive
         )
     )
 
@@ -706,6 +715,7 @@ data class YoutubeStream(
     val container: Container,
     val videoFormat: VideoFormat?,
     val audioFormat: AudioFormat?,
+    //val subtitleFormat: SubtitleFormat?,
     val streamProtocol: StreamProtocol
 ) {
     init {
@@ -751,16 +761,28 @@ enum class AudioCodec(val standard: String) {
     Opus("Opus")
 }
 
+data class SubtitleFormat(
+    val codec: SubtitleCodec,
+    val language: String
+)
+
+enum class SubtitleCodec(val standard: String) {
+    WebVTT("WebVTT"),
+    TTML("TTML")
+}
+
 enum class Container(val standard: String, val extension: String) {
     FLV("FLV", "flv"),
     _3GP("3GP", "3gp"),
     MP4("MP4", "mp4"),
     M4A("MP4", "m4a"),
-    WebM("WebM", "webm")
+    WebM("WebM", "webm"),
+    WebVTT("WebVTT", "vtt"),
+    TTML("TTML", "ttml")
 }
 
 enum class StreamProtocol {
     Progressive,
-    DASH,
+    Adaptive,
     HLS
 }

@@ -124,6 +124,6 @@ class MediaPlayView : ConstraintLayout {
 
     private fun initMedia(mediaHolder: YoutubeVideoMediaHolder) {
         imageViewCoverart.setImageBitmap(null)
-        textViewTitle.text = ""
+        textViewTitle.text = mediaHolder.youtubeVideoId
     }
 }

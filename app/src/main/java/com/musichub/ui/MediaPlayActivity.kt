@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -256,7 +257,7 @@ class MediaPlayActivity : AppCompatActivity() {
     private fun initMedia(mediaHolder: YoutubeVideoMediaHolder) {
         imageLoadCancellable?.cancel()
         imageViewCoverart.setImageBitmap(null)
-        textViewTitle.text = ""
+        textViewTitle.text = mediaHolder.youtubeVideoId
         textViewSubtitle.text = ""
     }
 
@@ -283,10 +284,6 @@ class MediaPlayActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             this.onBackPressed()
         }
-
-        val seekBarColor = ContextCompat.getColor(this, R.color.contentColorPrimary)
-        seekbarTimeline.progressDrawable.setColorFilter(seekBarColor, PorterDuff.Mode.MULTIPLY)
-        seekbarTimeline.thumb.setColorFilter(seekBarColor, PorterDuff.Mode.SRC_ATOP)
     }
 
     override fun onStart() {
